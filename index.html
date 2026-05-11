@@ -370,6 +370,27 @@ input.sinp:focus{border-color:var(--accent)}
         <button class="btn btn-s" onclick="calcTDEE()">Calc TDEE</button>
       </div>
       <button class="btn btn-d btn-w" onclick="clearAll()">Clear All Data</button>
+
+      <div style="margin-top:24px;margin-bottom:20px">
+        <div class="stitle">Google Drive Sync</div>
+        <div class="card" style="padding:0 16px">
+          <div class="srow" style="flex-direction:column;align-items:flex-start;gap:8px;padding:14px 0;border-bottom:1px solid var(--border)">
+            <div class="srow-lbl">Apps Script URL</div>
+            <input type="url" id="s-gsurl" class="inp" placeholder="Paste your /exec URL here" style="font-size:13px">
+            <div style="font-size:11px;color:var(--muted)">Paste the Web App URL from your Google Apps Script deployment.</div>
+          </div>
+          <div class="srow" style="flex-direction:column;align-items:flex-start;gap:8px;padding:14px 0">
+            <div class="srow-lbl">Secret Token</div>
+            <input type="password" id="s-gstoken" class="inp" placeholder="Enter your secret token" style="font-size:13px">
+            <div style="font-size:11px;color:var(--muted)">Must match the SECRET value set in your Apps Script.</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+          <button class="btn btn-p" onclick="driveBackup()">☁️ Backup to Drive</button>
+          <button class="btn btn-s" onclick="driveRestore()">⬇️ Restore from Drive</button>
+        </div>
+        <div id="sync-status" style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;min-height:18px"></div>
+      </div>
     </div>
 
   </div><!-- /content -->
@@ -769,6 +790,61 @@ function bar(id,v,max){var e=document.getElementById(id);if(e)e.style.width=Math
 function r1(n){return Math.round(n*10)/10}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
+// ── GOOGLE DRIVE SYNC ─────────────────────────────────────────
+function getDriveURL(){
+  var url=(document.getElementById('s-gsurl').value||'').trim();
+  if(!url)url=localStorage.getItem('ft_gsurl')||'';
+  return url;
+}
+function getDriveToken(){
+  var tok=(document.getElementById('s-gstoken').value||'').trim();
+  if(!tok)tok=localStorage.getItem('ft_gstoken')||'';
+  return tok;
+}
+function syncStatus(msg,col){
+  var el=document.getElementById('sync-status');
+  if(el){el.textContent=msg;el.style.color=col||'var(--muted)'}
+}
+function getAllData(){
+  var keys=Object.keys(localStorage).filter(function(k){return k.startsWith('ft_')});
+  var data={};
+  keys.forEach(function(k){try{data[k]=JSON.parse(localStorage.getItem(k))}catch(e){data[k]=localStorage.getItem(k)}});
+  return data;
+}
+function driveBackup(){
+  var url=getDriveURL(),tok=getDriveToken();
+  if(!url){toast('Paste your Apps Script URL in Settings first');return}
+  if(!tok){toast('Enter your secret token in Settings first');return}
+  localStorage.setItem('ft_gsurl',url);localStorage.setItem('ft_gstoken',tok);
+  syncStatus('Backing up…','var(--yellow)');
+  fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'backup',token:tok,data:getAllData()})})
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.status==='ok'){syncStatus('✓ Backed up at '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'}),'var(--accent)');toast('☁️ Backup complete')}
+      else{syncStatus('Failed: '+(d.error||'unknown'),'var(--red)');toast('Backup failed')}
+    })
+    .catch(function(){syncStatus('Network error — check URL','var(--red)');toast('Backup failed')});
+}
+function driveRestore(){
+  var url=getDriveURL(),tok=getDriveToken();
+  if(!url){toast('Paste your Apps Script URL in Settings first');return}
+  if(!tok){toast('Enter your secret token in Settings first');return}
+  if(!confirm('Restore from Drive? This will overwrite your current local data.'))return;
+  localStorage.setItem('ft_gsurl',url);localStorage.setItem('ft_gstoken',tok);
+  syncStatus('Restoring…','var(--yellow)');
+  fetch(url+'?action=restore&token='+encodeURIComponent(tok))
+    .then(function(r){return r.json()})
+    .then(function(d){
+      if(d.status==='ok'&&d.data){
+        Object.keys(d.data).forEach(function(k){
+          if(k.startsWith('ft_'))localStorage.setItem(k,typeof d.data[k]==='string'?d.data[k]:JSON.stringify(d.data[k]));
+        });
+        init();syncStatus('✓ Restored at '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'}),'var(--accent)');toast('⬇️ Restore complete');
+      } else {syncStatus('Failed: '+(d.error||'no data'),'var(--red)');toast('Restore failed')}
+    })
+    .catch(function(){syncStatus('Network error — check URL','var(--red)');toast('Restore failed')});
+}
+
 // ── FOOD SEARCH ENTER KEY ─────────────────────────────────────
 document.getElementById('food-q').addEventListener('keydown',function(e){if(e.key==='Enter')searchFood()});
 
@@ -776,6 +852,11 @@ document.getElementById('food-q').addEventListener('keydown',function(e){if(e.ke
 function init(){
   document.getElementById('hdr-date').textContent=new Date().toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
   loadSettings();renderMeals();renderWkHist();renderBody();updateHome();
+  // Restore saved Drive URL + token
+  var saved=localStorage.getItem('ft_gsurl')||'';
+  var urlEl=document.getElementById('s-gsurl');if(urlEl)urlEl.value=saved;
+  var savedTok=localStorage.getItem('ft_gstoken')||'';
+  var tokEl=document.getElementById('s-gstoken');if(tokEl)tokEl.value=savedTok;
 }
 init();
 </script>
