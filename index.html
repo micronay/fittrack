@@ -1142,8 +1142,7 @@ input.sinp:focus{border-color:var(--accent)}
     <div id="ex-lib-picks" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
 
     <!-- Sets -->
-    <div id="sets-list" style="margin-bottom:10px"></div>
-    <button class="btn btn-s btn-w btn-sm" onclick="addSet()" style="margin-bottom:12px">+ Add Set</button>
+    <div id="sets-list" style="margin-bottom:14px"></div>
     <button class="btn btn-p btn-w" onclick="saveExercise()">Add to Workout</button>
     <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('ex-modal')">Cancel</button>
   </div>
@@ -1194,7 +1193,7 @@ function openModal(id){
   document.getElementById(id).classList.add('on');
   if(id==='meal-modal') renderQuick();
   if(id==='ex-modal'){
-    pendingSets=[];currentExType='normal';renderSets();
+    pendingSets=[{w:'',r:''}];currentExType='normal';renderSets();
     document.getElementById('ex-nm2-wrap').style.display='none';
     document.getElementById('ex-nm-lbl').textContent='Exercise name';
     document.getElementById('ex-type-hint').textContent='Standard sets — log weight and reps for each set.';
@@ -1533,7 +1532,7 @@ function removeSet(i){pendingSets.splice(i,1);renderSets()}
 function renderSets(){
   var el=document.getElementById('sets-list');
   if(!pendingSets.length){
-    el.innerHTML='<p style="font-size:13px;color:var(--muted);text-align:center;padding:8px 0">Tap "+ Add Set" to log sets</p>';
+    el.innerHTML='<p style="font-size:13px;color:var(--muted);text-align:center;padding:8px 0">No sets here — add the exercise, then log sets on the workout card.</p>';
     return;
   }
   var isSuper=currentExType==='superset';
