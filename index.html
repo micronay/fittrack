@@ -1440,13 +1440,13 @@ function renderMeals(){
 
 // ── EXERCISE LIBRARY ──────────────────────────────────────────
 var EX_LIB={
-  chest:['Bench Press','Incline Bench Press','Decline Bench Press','Dumbbell Flyes','Cable Crossover','Push-Up','Chest Dip','Pec Deck Machine','Incline Dumbbell Press','Close-Grip Bench Press'],
-  back:['Deadlift','Pull-Up','Barbell Row','Seated Cable Row','Lat Pulldown','Single-Arm Dumbbell Row','T-Bar Row','Face Pull','Straight-Arm Pulldown','Hyperextension'],
-  shoulders:['Overhead Press','Dumbbell Lateral Raise','Arnold Press','Front Raise','Rear Delt Fly','Upright Row','Cable Lateral Raise','Shrugs','Machine Shoulder Press','Battle Ropes'],
-  arms:['Barbell Curl','Hammer Curl','Preacher Curl','Tricep Pushdown','Skull Crushers','Overhead Tricep Extension','Concentration Curl','Dips','Cable Curl','Reverse Curl'],
-  legs:['Squat','Leg Press','Romanian Deadlift','Leg Curl','Leg Extension','Walking Lunge','Calf Raise','Bulgarian Split Squat','Hack Squat','Glute Bridge'],
-  core:['Plank','Crunch','Hanging Leg Raise','Ab Wheel Rollout','Cable Crunch','Russian Twist','Bicycle Crunch','Dead Bug','Side Plank','Decline Sit-Up'],
-  cardio:['Treadmill Run','Rowing Machine','Stationary Bike','Jump Rope','Stair Climber','Elliptical','Sprint Intervals','Box Jumps','Burpees','Battle Ropes']
+  chest:['Bench Press','Incline Bench Press','Decline Bench Press','Dumbbell Bench Press','Incline Dumbbell Press','Decline Dumbbell Press','Dumbbell Flyes','Incline Dumbbell Flyes','Cable Crossover','Low-to-High Cable Flye','High-to-Low Cable Flye','Pec Deck Machine','Machine Chest Press','Smith Machine Bench Press','Push-Up','Incline Push-Up','Decline Push-Up','Plyometric Push-Up','Chest Dip','Close-Grip Bench Press','Landmine Press','Svend Press'],
+  back:['Deadlift','Rack Pull','Trap Bar Deadlift','Pull-Up','Chin-Up','Wide-Grip Pull-Up','Lat Pulldown','Close-Grip Lat Pulldown','Barbell Row','Pendlay Row','T-Bar Row','Seated Cable Row','Single-Arm Dumbbell Row','Chest-Supported Row','Meadows Row','Inverted Row','Face Pull','Straight-Arm Pulldown','Dumbbell Pullover','Cable Pullover','Hyperextension','Good Morning'],
+  shoulders:['Overhead Press','Seated Dumbbell Press','Standing Dumbbell Press','Arnold Press','Push Press','Machine Shoulder Press','Smith Machine Press','Behind-the-Neck Press','Z Press','Dumbbell Lateral Raise','Cable Lateral Raise','Machine Lateral Raise','Front Raise','Cable Front Raise','Plate Front Raise','Rear Delt Fly','Bent-Over Lateral Raise','Reverse Pec Deck','Cable Rear Delt Fly','Upright Row','Barbell Shrug','Dumbbell Shrug'],
+  arms:['Barbell Curl','EZ-Bar Curl','Dumbbell Curl','Incline Dumbbell Curl','Hammer Curl','Cable Hammer Curl','Preacher Curl','Concentration Curl','Spider Curl','Zottman Curl','Cable Curl','Reverse Curl','Tricep Pushdown','Rope Pushdown','Skull Crushers','Overhead Tricep Extension','Dumbbell Overhead Extension','Tricep Kickback','Bench Dip','Diamond Push-Up','Dips','Close-Grip Bench Press','Wrist Curl','Reverse Wrist Curl'],
+  legs:['Squat','Front Squat','Goblet Squat','Hack Squat','Box Squat','Smith Machine Squat','Leg Press','Bulgarian Split Squat','Walking Lunge','Reverse Lunge','Step-Up','Romanian Deadlift','Stiff-Leg Deadlift','Sumo Deadlift','Leg Curl','Lying Leg Curl','Seated Leg Curl','Nordic Curl','Leg Extension','Glute Bridge','Hip Thrust','Standing Calf Raise','Seated Calf Raise','Adductor Machine'],
+  core:['Plank','Side Plank','Plank Up-Down','Hollow Body Hold','Crunch','Reverse Crunch','Bicycle Crunch','Oblique Crunch','Sit-Up','Decline Sit-Up','V-Up','Leg Raise','Hanging Leg Raise','Hanging Knee Raise','Flutter Kicks','Mountain Climbers','Russian Twist','Cable Crunch','Cable Woodchopper','Pallof Press','Ab Wheel Rollout','Dead Bug','Windshield Wipers','Dragon Flag'],
+  cardio:['Treadmill Run','Outdoor Run','Incline Walk','Sprint Intervals','Rowing Machine','Stationary Bike','Assault Bike','Cycling','Elliptical','Stair Climber','SkiErg','Versaclimber','Swimming','Jump Rope','Box Jumps','Burpees','High Knees','Jumping Jacks','Kettlebell Swing','Battle Ropes','Sled Push','Sled Pull']
 };
 var currentLibTab='chest';
 
@@ -1492,14 +1492,45 @@ function startWorkout(type){
   document.getElementById('wk-start').style.display='none';
   document.getElementById('wk-active').style.display='block';
   if(WTI)clearInterval(WTI);
-  WTI=setInterval(function(){WE++;var m=Math.floor(WE/60),s=WE%60;set('wk-timer',m+':'+(s<10?'0':'')+s)},1000);
+  WTI=setInterval(tickWk,1000);
+  tickWk();
   renderWkEx();renderLibExercises();
+}
+// Derive elapsed time from the start timestamp (not a tick counter), so a
+// locked screen / backgrounded tab — which freezes JS timers — can't undercount.
+function tickWk(){
+  if(!AW)return;
+  WE=Math.floor((Date.now()-AW.start)/1000);
+  var m=Math.floor(WE/60),s=WE%60;
+  set('wk-timer',m+':'+(s<10?'0':'')+s);
+}
+// When the screen wakes / tab refocuses, snap the timer straight to the correct value.
+document.addEventListener('visibilitychange',function(){if(!document.hidden)tickWk()});
+window.addEventListener('pageshow',tickWk);
+// ── CRASH-SAFE ACTIVE WORKOUT ─────────────────────────────────
+// Persist the in-progress workout so it survives the OS killing the app
+// (e.g. after a long screen lock). Elapsed time is rebuilt from the saved
+// start timestamp, so a resumed workout shows the correct running time.
+function saveAW(){try{if(AW)localStorage.setItem('ft_aw',JSON.stringify(AW));}catch(e){}}
+function clearAW(){try{localStorage.removeItem('ft_aw');}catch(e){}}
+function restoreAW(){
+  var raw;try{raw=JSON.parse(localStorage.getItem('ft_aw')||'null');}catch(e){raw=null;}
+  if(!raw||!raw.start)return;
+  var ageH=(Date.now()-raw.start)/3600000;
+  if(ageH>12&&!confirm('You have an unfinished '+(raw.type||'')+' workout from earlier.\n\nResume it? (Tap Cancel to discard it.)')){clearAW();return;}
+  AW=raw;if(!AW.exercises)AW.exercises=[];
+  document.getElementById('wk-start').style.display='none';
+  document.getElementById('wk-active').style.display='block';
+  if(WTI)clearInterval(WTI);
+  WTI=setInterval(tickWk,1000);tickWk();
+  renderWkEx();renderLibExercises();
+  toast('↩︎ Resumed your workout');
 }
 function finishWorkout(){
   if(!AW)return;clearInterval(WTI);
-  AW.dur=WE;AW.date=td();AW.dateD=new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'short'});
+  AW.dur=Math.floor((Date.now()-AW.start)/1000);AW.date=td();AW.dateD=new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'short'});
   checkPBs(AW.exercises||[]);
-  var w=gw();w.unshift(AW);sw(w);AW=null;
+  var w=gw();w.unshift(AW);sw(w);AW=null;clearAW();
   document.getElementById('wk-active').style.display='none';
   document.getElementById('wk-start').style.display='block';
   renderWkHist();updateHome();renderLibExercises();toast('💪 Workout saved!');
@@ -1602,6 +1633,7 @@ function saveExercise(){
 // ── RENDER ACTIVE WORKOUT EXERCISES ───────────────────────────
 function renderWkEx(){
   if(!AW)return;
+  saveAW();
   if(!AW.exercises.length){
     document.getElementById('wk-exlist').innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:8px 0">No exercises yet — tap + Add Exercise or pick from the library below.</p>';
     return;
@@ -1672,11 +1704,13 @@ function renderWkEx(){
 function updateSet(ei,si,field,val){
   if(!AW||!AW.exercises[ei])return;
   AW.exercises[ei].sets[si][field]=field==='w'?parseFloat(val)||0:parseInt(val)||0;
+  saveAW();
 }
 function updateSuperSet(ei,si,field,val){
   if(!AW||!AW.exercises[ei])return;
   var isW=field==='wa'||field==='wb';
   AW.exercises[ei].sets[si][field]=isW?parseFloat(val)||0:parseInt(val)||0;
+  saveAW();
 }
 function addSetToEx(ei){
   if(!AW||!AW.exercises[ei])return;
@@ -1709,7 +1743,7 @@ function renderWkHist(){
     return '<div class="wi"><div class="wb">'+wkEm(wk.type)+'</div>'
       +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">'+esc(wk.type)+(exNames.length?' · '+esc(exNames[0]):'')+'</div>'
       +'<div style="font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sub+'</div></div>'
-      +'<div style="font-size:13px;font-weight:700;color:var(--muted);flex-shrink:0">'+dur+'</div>'
+      +'<div onclick="editWkDur('+i+')" title="Tap to edit duration" style="font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent">'+dur+' ✎</div>'
       +'<button onclick="delWk('+i+')" class="del">×</button></div>';
   }).join('');
 }
@@ -1723,6 +1757,15 @@ function renderWkWeek(){
   set('wkw-goal',Math.min(wk.length,5)+' of 5 goal');
 }
 function delWk(i){var w=gw();w.splice(i,1);sw(w);renderWkHist();updateHome()}
+function editWkDur(i){
+  var w=gw();if(!w[i])return;
+  var cur=w[i].dur?Math.round(w[i].dur/60):0;
+  var v=prompt('How many minutes did this workout run for?',cur);
+  if(v===null)return;
+  var mins=parseInt(v,10);
+  if(isNaN(mins)||mins<0){toast('Enter a valid number of minutes');return}
+  w[i].dur=mins*60;sw(w);renderWkHist();updateHome();toast('✓ Duration updated — calories recalculated');
+}
 function wkEm(t){return{Gym:'🏋️',Run:'🏃',Badminton:'🏸',Other:'⚡'}[t]||'💪'}
 
 // ── BODY ──────────────────────────────────────────────────────
@@ -2851,6 +2894,7 @@ function init(){
   var savedTok=localStorage.getItem('ft_gstoken')||'';
   var tokEl=document.getElementById('s-gstoken');if(tokEl)tokEl.value=savedTok;
   renderMealPlans();renderPrepList();
+  restoreAW();
 }
 init();
 </script>
