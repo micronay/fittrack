@@ -17,18 +17,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   --bg:#000000;--card:#101216;--input:#1a1c22;
   --accent:#00d4aa;--blue:#4a9eff;--red:#ff6b6b;--yellow:#ffd166;--purple:#a78bfa;--green:#2fe07a;
   --txt:#f2f4f7;--muted:#8b93a3;--border:rgba(255,255,255,0.07);
-  --r:16px;--tab-h:62px;--hdr-h:52px
+  --r:16px;--tab-h:62px
 }
 
-/* HEADER */
-.hdr{height:var(--hdr-h);background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;flex-shrink:0;z-index:10}
-.hdr h1{font-size:18px;font-weight:700;letter-spacing:-.3px;color:var(--accent)}
-.hdr-date{margin-left:auto;font-size:12px;color:var(--muted)}
 
 /* PURE CSS TABS */
 .tr{display:none}
 
-.shell{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.shell{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
 .content{flex:1;overflow:hidden;position:relative}
 .pane{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 24px;display:none}
 
@@ -41,13 +37,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 #t6:checked~.shell .content #p6{display:block}
 
 /* TAB BAR */
-.tabbar{height:var(--tab-h);background:var(--bg);border-top:1px solid var(--border);display:flex;flex-shrink:0;z-index:10}
+.tabbar{height:var(--tab-h);background:var(--bg);border-top:1px solid var(--border);display:flex;flex-shrink:0;position:relative;z-index:20}
 .tl{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font-size:9px;font-weight:500;-webkit-tap-highlight-color:transparent;user-select:none;padding:0 1px}
 .tl svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* Active tab colours */
 #t1:checked~.shell .tabbar .tl[for=t1],
-#t2:checked~.shell .tabbar .tl[for=t2],
 #t3:checked~.shell .tabbar .tl[for=t3],
 #t4:checked~.shell .tabbar .tl[for=t4],
 #t5:checked~.shell .tabbar .tl[for=t5],
@@ -69,10 +64,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 /* FORMS */
 .fg{margin-bottom:14px}
 .lbl{font-size:12px;color:var(--muted);margin-bottom:5px;display:block;font-weight:500}
-.inp,.sel,.ta{width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--txt);font-size:15px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none}
-.inp:focus,.sel:focus,.ta:focus{border-color:var(--accent)}
+.inp,.sel{width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--txt);font-size:15px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none}
+.inp:focus,.sel:focus{border-color:var(--accent)}
 .sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b9ab0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
-.ta{min-height:80px;resize:vertical}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* PROGRESS BARS */
@@ -80,7 +74,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pf{height:100%;border-radius:99px;transition:width .4s ease}
 
 /* MACRO ROW */
-.macro-row{display:flex;justify-content:space-between;margin-top:8px}
 .mi{text-align:center}
 .mi .mv{font-size:15px;font-weight:600}
 .mi .ml{font-size:10px;color:var(--muted);margin-top:1px}
@@ -107,12 +100,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .wi:last-child{border-bottom:none}
 .wb{width:40px;height:40px;border-radius:10px;background:rgba(74,158,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
 
-/* MEASURE GRID */
-.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mb{background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border);text-align:center}
-.mb .mbv{font-size:22px;font-weight:700;color:var(--blue)}
-.mb .mbu{font-size:11px;color:var(--muted)}
-.mb .mbl{font-size:12px;color:var(--muted);margin-top:3px}
 
 /* SETTINGS */
 .stitle{font-size:11px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;padding-left:2px}
@@ -128,6 +115,16 @@ input.sinp:focus{border-color:var(--accent)}
 .ms{background:#15171c;border:1px solid var(--border);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 20px 40px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .mhandle{width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px}
 .mtitle{font-size:18px;font-weight:700;margin-bottom:16px}
+.tl-add{background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.add-fab{width:50px;height:50px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,212,170,.45);transform:translateY(-12px);transition:transform .12s}
+.add-fab svg{width:24px;height:24px;stroke:#04201a;fill:none;stroke-width:2.7;stroke-linecap:round}
+.tl-add:active .add-fab{transform:translateY(-12px) scale(.9)}
+.add-choices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:2px}
+.add-choice{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--input);border:1px solid var(--border);border-radius:14px;padding:18px 6px;cursor:pointer;color:var(--txt);font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .12s,border-color .12s}
+.add-choice:active{transform:scale(.96)}
+.add-emoji{font-size:30px;line-height:1}
+.add-l{font-size:14px;font-weight:700;margin-top:4px}
+.add-s{font-size:10px;color:var(--muted);text-align:center}
 
 /* PILL TABS (modal) */
 .ptabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
@@ -200,7 +197,6 @@ input.sinp:focus{border-color:var(--accent)}
 .sec-lbl{font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--muted);margin:0 2px 10px;text-transform:uppercase}
 .card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .card-hd .card-title{margin-bottom:0}
-.link-btn{font-size:12px;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit}
 
 /* MEAL GROUP */
 .mg-head{display:flex;align-items:baseline;justify-content:space-between;margin:14px 2px 6px}
@@ -277,9 +273,6 @@ input.sinp:focus{border-color:var(--accent)}
               <linearGradient id="gradCal" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#00d4aa"/><stop offset="1" stop-color="#3df0c4"/>
               </linearGradient>
-              <linearGradient id="gradSteps" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#ffc24a"/><stop offset="1" stop-color="#ff7e5f"/>
-              </linearGradient>
               <linearGradient id="gradWater" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#4a9eff"/><stop offset="1" stop-color="#22d3ee"/>
               </linearGradient>
@@ -287,20 +280,14 @@ input.sinp:focus{border-color:var(--accent)}
             <g transform="rotate(-90 60 60)">
               <circle class="rt" cx="60" cy="60" r="54" stroke-width="11" stroke="rgba(0,212,170,.13)"/>
               <circle class="rf" id="ring" style="--rgw:rgba(0,212,170,.55)" cx="60" cy="60" r="54" stroke="url(#gradCal)" stroke-width="11" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
-              <circle class="rt" cx="60" cy="60" r="41" stroke-width="11" stroke="rgba(255,150,80,.13)"/>
-              <circle class="rf" id="ring-steps" style="--rgw:rgba(255,140,80,.55)" cx="60" cy="60" r="41" stroke="url(#gradSteps)" stroke-width="11" stroke-dasharray="257.6" stroke-dashoffset="257.6"/>
-              <circle class="rt" cx="60" cy="60" r="28" stroke-width="11" stroke="rgba(74,158,255,.13)"/>
-              <circle class="rf" id="ring-water" style="--rgw:rgba(74,158,255,.55)" cx="60" cy="60" r="28" stroke="url(#gradWater)" stroke-width="11" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              <circle class="rt" cx="60" cy="60" r="41" stroke-width="11" stroke="rgba(74,158,255,.13)"/>
+              <circle class="rf" id="ring-water" style="--rgw:rgba(74,158,255,.55)" cx="60" cy="60" r="41" stroke="url(#gradWater)" stroke-width="11" stroke-dasharray="257.6" stroke-dashoffset="257.6"/>
             </g>
           </svg>
           <div class="ring-legend">
             <div class="rl-item">
               <span class="rl-dot" style="background:#00d4aa;--d:rgba(0,212,170,.6)"></span>
               <div><div class="rl-lbl">Calories</div><div class="rl-val"><span class="rl-abs"><span id="h-cal">0</span> <span class="rl-goal">/ <span id="h-goal">2000</span></span></span><span class="rl-pct" id="pct-cal" style="color:#00d4aa">0%</span></div></div>
-            </div>
-            <div class="rl-item">
-              <span class="rl-dot" style="background:#ff9550;--d:rgba(255,140,80,.6)"></span>
-              <div><div class="rl-lbl">Steps</div><div class="rl-val"><span class="rl-abs"><span id="hr-steps">0</span> <span class="rl-goal">/ <span id="hr-steps-goal">10,000</span></span></span><span class="rl-pct" id="pct-steps" style="color:#ff9550">0%</span></div></div>
             </div>
             <div class="rl-item">
               <span class="rl-dot" style="background:#4a9eff;--d:rgba(74,158,255,.6)"></span>
@@ -326,67 +313,10 @@ input.sinp:focus{border-color:var(--accent)}
         <div class="wdots" id="wdots"></div>
       </div>
 
-      <div class="sg" style="margin-bottom:12px">
-        <div class="sb"><div class="si">🏋️</div><div class="sv" style="color:var(--blue)" id="h-wk">0</div><div class="slb">Workouts today</div></div>
+      <div class="sg" style="margin-bottom:12px;grid-template-columns:1fr 1fr 1fr">
         <div class="sb"><div class="si">📏</div><div class="sv" style="color:var(--accent)" id="h-wt">—</div><div class="slb">Last weight (kg)</div></div>
         <div class="sb"><div class="si">🔥</div><div class="sv" style="color:var(--yellow)" id="h-st">0</div><div class="slb">Day streak</div></div>
         <div class="sb"><div class="si">⚖️</div><div class="sv" style="color:var(--blue)" id="h-bmi">—</div><div class="slb">BMI</div></div>
-      </div>
-
-      <!-- SLEEP CARD -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div class="card-title" style="margin-bottom:0">😴 Last Night's Sleep</div>
-          <button class="btn btn-s btn-sm" onclick="openModal('sleep-modal')">Log Sleep</button>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-          <div style="text-align:center;background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)">
-            <div style="font-size:22px;font-weight:700;color:var(--purple)" id="h-sleep-hrs">—</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">Hours</div>
-          </div>
-          <div style="text-align:center;background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)">
-            <div style="font-size:22px;font-weight:700;color:var(--purple)" id="h-sleep-q">—</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">Quality</div>
-          </div>
-          <div style="text-align:center;background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)">
-            <div style="font-size:22px;font-weight:700;color:var(--purple)" id="h-sleep-streak">0</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">Sleep streak</div>
-          </div>
-        </div>
-        <div class="pb" style="margin-top:10px">
-          <div class="pf" id="h-sleep-bar" style="width:0%;background:var(--purple)"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-top:5px">
-          <span style="font-size:11px;color:var(--muted)">Goal: 8 hrs</span>
-          <span style="font-size:11px;color:var(--purple);font-weight:600" id="h-sleep-label">Not logged</span>
-        </div>
-      </div>
-
-      <!-- STEPS CARD -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div class="card-title" style="margin-bottom:0">👟 Daily Steps</div>
-          <button class="btn btn-s btn-sm" onclick="openStepsModal()">Update</button>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <div>
-            <div style="font-size:36px;font-weight:700;color:var(--blue);line-height:1" id="h-steps">0</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px">of <span id="h-steps-goal">10,000</span> steps</div>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:13px;color:var(--muted);margin-bottom:6px" id="h-steps-km">0.0 km · 0 kcal</div>
-            <div class="pb"><div class="pf" id="h-steps-bar" style="width:0%;background:var(--blue)"></div></div>
-            <div style="display:flex;justify-content:space-between;margin-top:5px">
-              <span style="font-size:11px;color:var(--muted)" id="h-steps-pct">0%</span>
-              <span style="font-size:11px;color:var(--blue);font-weight:600" id="h-steps-rem">10,000 to go</span>
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn btn-s btn-sm" style="flex:1" onclick="quickSteps(2000)">+2,000</button>
-          <button class="btn btn-s btn-sm" style="flex:1" onclick="quickSteps(5000)">+5,000</button>
-          <button class="btn btn-s btn-sm" style="flex:1" onclick="quickSteps(8000)">+8,000</button>
-        </div>
       </div>
 
       <!-- WATER TRACKER -->
@@ -412,21 +342,17 @@ input.sinp:focus{border-color:var(--accent)}
       <!-- CALORIE BURN FROM WORKOUTS -->
       <div class="card">
         <div class="card-title">🔥 Calorie Burn Today</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div style="text-align:center;background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)">
             <div style="font-size:20px;font-weight:700;color:var(--yellow)" id="h-burn-workout">0</div>
             <div style="font-size:11px;color:var(--muted);margin-top:2px">Workout kcal</div>
-          </div>
-          <div style="text-align:center;background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)">
-            <div style="font-size:20px;font-weight:700;color:var(--blue)" id="h-burn-steps">0</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">Steps kcal</div>
           </div>
           <div style="text-align:center;background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)">
             <div style="font-size:20px;font-weight:700;color:var(--accent)" id="h-burn-net">0</div>
             <div style="font-size:11px;color:var(--muted);margin-top:2px">Net calories</div>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px" id="h-burn-note">Net = consumed − workout − steps burn</div>
+        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px" id="h-burn-note">Net = consumed − workout</div>
       </div>
 
     </div>
@@ -737,14 +663,6 @@ input.sinp:focus{border-color:var(--accent)}
         <div style="font-size:11px;color:var(--muted);margin-top:6px;padding-left:2px">Protein & carbs = 4 kcal/g · Fat = 9 kcal/g</div>
       </div>
 
-      <!-- STEPS GOAL -->
-      <div style="margin-bottom:20px">
-        <div class="stitle">👟 Daily Step Goal</div>
-        <div class="card" style="padding:0 16px">
-          <div class="srow"><div class="srow-lbl">Step goal</div><input type="number" id="s-stepgoal" class="sinp" placeholder="10000" inputmode="numeric"></div>
-        </div>
-      </div>
-
       <!-- SAVE + ACTIONS -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <button class="btn btn-p" onclick="saveSettings()">💾 Save All</button>
@@ -844,14 +762,13 @@ input.sinp:focus{border-color:var(--accent)}
       <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Home</span>
     </label>
-    <label class="tl" for="t2">
-      <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-      <span>Meals</span>
-    </label>
     <label class="tl" for="t3">
       <svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="18" y2="12"/><path d="M10 8v8M14 8v8"/><rect x="4" y="10" width="2" height="4" rx="1"/><rect x="18" y="10" width="2" height="4" rx="1"/></svg>
       <span>Workout</span>
     </label>
+    <button class="tl tl-add" onclick="openModal('add-modal')" aria-label="Add">
+      <span class="add-fab"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+    </button>
     <label class="tl" for="t4">
       <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       <span>Body</span>
@@ -861,6 +778,32 @@ input.sinp:focus{border-color:var(--accent)}
       <span>Trends</span>
     </label>
   </nav>
+</div>
+
+<!-- ADD CHOOSER MODAL -->
+<div class="mo" id="add-modal">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div class="mtitle">What are you adding?</div>
+    <div class="add-choices">
+      <button class="add-choice" onclick="chooseAdd('meal')">
+        <span class="add-emoji">🍽️</span>
+        <span class="add-l">Meal</span>
+        <span class="add-s">Food &amp; macros</span>
+      </button>
+      <button class="add-choice" onclick="chooseAdd('workout')">
+        <span class="add-emoji">🏋️</span>
+        <span class="add-l">Workout</span>
+        <span class="add-s">New session</span>
+      </button>
+      <button class="add-choice" onclick="chooseAdd('body')">
+        <span class="add-emoji">📏</span>
+        <span class="add-l">Body</span>
+        <span class="add-s">Measurements</span>
+      </button>
+    </div>
+    <button class="btn btn-s btn-w" style="margin-top:14px" onclick="closeModal('add-modal')">Cancel</button>
+  </div>
 </div>
 
 <!-- MEAL PLAN MODAL -->
@@ -959,67 +902,7 @@ input.sinp:focus{border-color:var(--accent)}
   </div>
 </div>
 
-<!-- SLEEP MODAL -->
-<div class="mo" id="sleep-modal">
-  <div class="ms">
-    <div class="mhandle"></div>
-    <div class="mtitle">😴 Log Sleep</div>
-    <div class="fg">
-      <label class="lbl">Hours slept</label>
-      <input type="number" id="sl-hrs" class="inp" placeholder="e.g. 7.5" step="0.5" inputmode="decimal">
-    </div>
-    <div class="fg">
-      <label class="lbl">Bedtime</label>
-      <input type="time" id="sl-bed" class="inp" value="22:30">
-    </div>
-    <div class="fg">
-      <label class="lbl">Wake time</label>
-      <input type="time" id="sl-wake" class="inp" value="06:30">
-    </div>
-    <div class="fg">
-      <label class="lbl">Sleep quality</label>
-      <select id="sl-q" class="sel">
-        <option value="">Select…</option>
-        <option value="😴 Great">😴 Great</option>
-        <option value="🙂 Good">🙂 Good</option>
-        <option value="😐 OK">😐 OK</option>
-        <option value="😫 Poor">😫 Poor</option>
-      </select>
-    </div>
-    <div class="fg">
-      <label class="lbl">Notes (optional)</label>
-      <input type="text" id="sl-note" class="inp" placeholder="e.g. Woke up twice, vivid dreams">
-    </div>
-    <button class="btn btn-p btn-w" onclick="saveSleep()">Save Sleep</button>
-    <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('sleep-modal')">Cancel</button>
-  </div>
-</div>
-
 <!-- STEPS MODAL -->
-<div class="mo" id="steps-modal">
-  <div class="ms">
-    <div class="mhandle"></div>
-    <div class="mtitle">👟 Log Steps</div>
-    <div class="fg">
-      <label class="lbl">Today's steps</label>
-      <input type="number" id="st-steps" class="inp" placeholder="e.g. 8500" inputmode="numeric">
-    </div>
-    <div class="fg">
-      <label class="lbl">Daily step goal</label>
-      <input type="number" id="st-goal" class="inp" placeholder="10000" inputmode="numeric">
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-      <button class="btn btn-s btn-sm" onclick="setStepVal(4000)">4,000</button>
-      <button class="btn btn-s btn-sm" onclick="setStepVal(7500)">7,500</button>
-      <button class="btn btn-s btn-sm" onclick="setStepVal(10000)">10,000</button>
-      <button class="btn btn-s btn-sm" onclick="setStepVal(12000)">12,000</button>
-      <button class="btn btn-s btn-sm" onclick="setStepVal(15000)">15,000</button>
-      <button class="btn btn-s btn-sm" onclick="setStepVal(20000)">20,000</button>
-    </div>
-    <button class="btn btn-p btn-w" onclick="saveSteps()">Save Steps</button>
-    <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('steps-modal')">Cancel</button>
-  </div>
-</div>
 
 <!-- MEAL MODAL -->
 <div class="mo" id="meal-modal">
@@ -1208,6 +1091,12 @@ function openModal(id){
 function closeModal(id){
   document.getElementById(id).classList.remove('on');
   if(id==='meal-modal') stopScanner();
+}
+function chooseAdd(kind){
+  closeModal('add-modal');
+  if(kind==='meal'){document.getElementById('t2').checked=true;}
+  else if(kind==='workout'){document.getElementById('t3').checked=true;}
+  else if(kind==='body'){document.getElementById('t4').checked=true;openModal('body-modal');}
 }
 document.querySelectorAll('.mo').forEach(function(o){
   o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('on')})
@@ -1535,7 +1424,6 @@ function finishWorkout(){
   document.getElementById('wk-start').style.display='block';
   renderWkHist();updateHome();renderLibExercises();toast('💪 Workout saved!');
 }
-var pendingSets=[];
 var currentExType='normal';
 
 function setExType(type,el){
@@ -1557,7 +1445,6 @@ function setExType(type,el){
   renderSets();
 }
 
-function addSet(){pendingSets.push({w:'',r:''});renderSets()}
 function removeSet(i){pendingSets.splice(i,1);renderSets()}
 
 function renderSets(){
@@ -2011,8 +1898,6 @@ function loadSettings(){
   setV('s-gym',s.calGym||'');setV('s-run',s.calRun||'');setV('s-bad',s.calBad||'');setV('s-rst',s.calRst||'');
   setV('s-p',s.protein||'');setV('s-c',s.carbs||'');setV('s-f',s.fat||'');setV('s-fi',s.fibre||'');
   document.getElementById('s-dt').value=s.dt||'rst';
-  // Step goal
-  var sd=getStepsData();setV('s-stepgoal',sd.goal||10000);
   updateMacroKcal();
 }
 function updateMacroKcal(){
@@ -2055,9 +1940,6 @@ function saveSettings(){
     b.unshift({date:td(),dateD:new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'short'}),wt:wtVal,bmi:bmi});
     sbk(b);renderBody();
   }
-  // Save step goal
-  var goalVal=parseInt(document.getElementById('s-stepgoal').value)||10000;
-  var sd=getStepsData();sd.goal=goalVal;saveStepsData(sd);
   // Update greeting if name set
   updateGreeting();
   renderMeals();updateHome();toast('✓ Settings saved');
@@ -2111,10 +1993,7 @@ function updateHome(){
   var dtC={gym:'gym',run:'run',bad:'bad',rst:'rst'};
   var badge=document.getElementById('dtp');badge.textContent=dtL[s.dt||'rst']||'Rest Day';badge.className='dtp '+(dtC[s.dt]||'rst');
   var b=gb(),l=b[0]||{};set('h-wt',l.wt||'—');set('h-bmi',l.bmi||'—');
-  var wkToday=gw().filter(function(x){return x.date===td()});set('h-wk',wkToday.length);
   set('h-st',streak());
-  updateSleepUI();
-  updateStepsUI();
   updateWaterUI();
   updateBurnUI();
   renderDots();
@@ -2148,115 +2027,6 @@ function toggleRingPct(){var h=document.querySelector('.ring-hero');if(h)h.class
 function hexA(hex,a){var h=hex.replace('#','');return'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')'}
 function r1(n){return Math.round(n*10)/10}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-
-// ── SLEEP ─────────────────────────────────────────────────────
-function getSleepLogs(){try{return JSON.parse(localStorage.getItem('ft_sleep')||'[]')}catch(e){return[]}}
-function saveSleepLogs(l){localStorage.setItem('ft_sleep',JSON.stringify(l))}
-function getTodaySleep(){
-  var logs=getSleepLogs();
-  return logs.find(function(l){return l.date===td()})||null;
-}
-
-function saveSleep(){
-  var hrs=parseFloat(document.getElementById('sl-hrs').value);
-  var bed=document.getElementById('sl-bed').value;
-  var wake=document.getElementById('sl-wake').value;
-  var q=document.getElementById('sl-q').value;
-  var note=document.getElementById('sl-note').value.trim();
-  if(!hrs&&!bed){toast('Enter hours or times');return}
-  // Auto-calculate hours from times if not entered
-  if(!hrs&&bed&&wake){
-    var bParts=bed.split(':'),wParts=wake.split(':');
-    var bMins=parseInt(bParts[0])*60+parseInt(bParts[1]);
-    var wMins=parseInt(wParts[0])*60+parseInt(wParts[1]);
-    if(wMins<bMins)wMins+=24*60;
-    hrs=Math.round((wMins-bMins)/60*10)/10;
-  }
-  var entry={date:td(),dateD:new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'short'}),hrs:hrs,bed:bed,wake:wake,q:q,note:note};
-  var logs=getSleepLogs().filter(function(l){return l.date!==td()});
-  logs.unshift(entry);saveSleepLogs(logs);
-  // Also update body log sleep field
-  var b=gb(),existing=b.find(function(x){return x.date===td()});
-  if(existing){existing.sl=hrs;existing.sq=q}
-  else{b.unshift({date:td(),dateD:entry.dateD,sl:hrs,sq:q})}
-  sbk(b);
-  closeModal('sleep-modal');updateHome();renderBody();toast('😴 Sleep logged');
-}
-
-function updateSleepUI(){
-  var entry=getTodaySleep();
-  // fallback to body log
-  if(!entry){var b=gb(),l=b[0];if(l&&l.sl){entry={hrs:l.sl,q:l.sq||''}}}
-  if(!entry||!entry.hrs){
-    set('h-sleep-hrs','—');set('h-sleep-q','—');set('h-sleep-label','Not logged');
-    bar('h-sleep-bar',0,8);
-  } else {
-    set('h-sleep-hrs',entry.hrs);
-    set('h-sleep-q',entry.q?entry.q.split(' ')[1]||entry.q:'—');
-    var pct=Math.min(entry.hrs/8,1);
-    bar('h-sleep-bar',entry.hrs,8);
-    var lbl=entry.hrs>=8?'Goal met! 🎉':entry.hrs+'h of 8h goal';
-    set('h-sleep-label',lbl);
-  }
-  // Sleep streak
-  var streak=0,d=new Date();
-  for(var i=0;i<30;i++){
-    var key=d.toISOString().slice(0,10);
-    var logs=getSleepLogs();
-    var found=logs.find(function(l){return l.date===key});
-    if(!found){var b=gb();found=b.find(function(x){return x.date===key&&x.sl})}
-    if(found){streak++;d.setDate(d.getDate()-1)}else break;
-  }
-  set('h-sleep-streak',streak);
-}
-
-// ── STEPS ─────────────────────────────────────────────────────
-function getStepsData(){try{return JSON.parse(localStorage.getItem('ft_steps')||'{}')}catch(e){return{}}}
-function saveStepsData(d){localStorage.setItem('ft_steps',JSON.stringify(d))}
-function getTodaySteps(){var d=getStepsData();return{steps:d[td()]||0,goal:d.goal||10000}}
-
-function openStepsModal(){
-  var s=getTodaySteps();
-  document.getElementById('st-steps').value=s.steps||'';
-  document.getElementById('st-goal').value=s.goal||10000;
-  openModal('steps-modal');
-}
-
-function setStepVal(v){document.getElementById('st-steps').value=v}
-
-function saveSteps(){
-  var steps=parseInt(document.getElementById('st-steps').value)||0;
-  var goal=parseInt(document.getElementById('st-goal').value)||10000;
-  var d=getStepsData();
-  d[td()]=steps;d.goal=goal;
-  saveStepsData(d);
-  closeModal('steps-modal');updateHome();toast('👟 Steps saved');
-}
-
-function quickSteps(val){
-  var d=getStepsData();
-  d[td()]=val;
-  saveStepsData(d);updateHome();toast('👟 '+val.toLocaleString()+' steps');
-}
-
-function updateStepsUI(){
-  var s=getTodaySteps(),steps=s.steps,goal=s.goal;
-  set('h-steps',steps.toLocaleString());
-  set('h-steps-goal',goal.toLocaleString());
-  var km=Math.round(steps*0.00078*10)/10;
-  var kcal=Math.round(steps*0.04);
-  set('h-steps-km',km+' km · '+kcal+' kcal');
-  bar('h-steps-bar',steps,goal);
-  var pct=Math.min(Math.round(steps/goal*100),100);
-  set('h-steps-pct',pct+'%');
-  var rem=Math.max(goal-steps,0);
-  set('h-steps-rem',rem>0?rem.toLocaleString()+' to go':'Goal reached! 🎉');
-  // Activity ring + legend
-  setRing('ring-steps',steps/goal);
-  set('hr-steps',steps.toLocaleString());
-  set('hr-steps-goal',goal.toLocaleString());
-  set('pct-steps',Math.round(steps/goal*100)+'%');
-}
 
 // ── GOOGLE DRIVE SYNC ─────────────────────────────────────────
 function getDriveURL(){
@@ -2380,10 +2150,9 @@ function updateBurnUI(){
     var rate=BURN_RATES[w.type]||300;
     return a+Math.round(rate*(w.dur||0)/3600);
   },0);
-  var stepsBurn=Math.round((getStepsData()[td()]||0)*0.04);
   var meals=gm(),consumed=meals.reduce(function(a,m){return a+m.cals},0);
-  var net=consumed-wkBurn-stepsBurn;
-  set('h-burn-workout',wkBurn);set('h-burn-steps',stepsBurn);set('h-burn-net',net);
+  var net=consumed-wkBurn;
+  set('h-burn-workout',wkBurn);set('h-burn-net',net);
   var netEl=document.getElementById('h-burn-net');
   if(netEl)netEl.style.color=net>0?'var(--yellow)':'var(--green)';
 }
@@ -2800,15 +2569,6 @@ function openModal_progressCard(days){
   var calGoalV=calGoal(s);
   var goalHitPct=calGoalV&&avgCals?Math.round(avgCals/calGoalV*100):0;
 
-  // Sleep avg
-  var sleepLogs=getSleepLogs().filter(function(l){return dates.indexOf(l.date)>=0});
-  var avgSleep=sleepLogs.length?r1(sleepLogs.reduce(function(a,l){return a+(l.hrs||0)},0)/sleepLogs.length):null;
-
-  // Steps avg
-  var stepsData=getStepsData();
-  var stepDays=dates.filter(function(d){return stepsData[d]>0});
-  var avgSteps=stepDays.length?Math.round(stepDays.reduce(function(a,d){return a+stepsData[d]},0)/stepDays.length):0;
-
   var name=s.name||'Athlete';
   var fromDate=new Date(dates[0]+'T12:00:00').toLocaleDateString('en-AU',{day:'2-digit',month:'short'});
   var toDate=new Date(dates[dates.length-1]+'T12:00:00').toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'});
@@ -2818,12 +2578,6 @@ function openModal_progressCard(days){
       +'<div style="font-size:22px;font-weight:800;color:'+col+'">'+val+'</div>'
       +(unit?'<div style="font-size:10px;color:#8b9ab0;margin-top:1px">'+unit+'</div>':'')
       +'<div style="font-size:11px;color:#8b9ab0;margin-top:3px">'+label+'</div></div>';
-  }
-  function changeTag(val,unit,good){
-    if(val===null)return'';
-    var pos=val>0,neutral=val===0;
-    var col=neutral?'#8b9ab0':(good==='up'?pos?'#ff6b6b':'#00d4aa':pos?'#00d4aa':'#ff6b6b');
-    return ' <span style="font-size:13px;font-weight:700;color:'+col+'">'+(pos?'+':'')+val+unit+'</span>';
   }
 
   var html=
@@ -2863,12 +2617,10 @@ function openModal_progressCard(days){
     +statBox(pbCount,'','PBs all time 🏆','#ffd166','rgba(255,209,102,0.2)')
     +'</div>'
 
-    // Sleep & steps
-    +'<div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#8b9ab0;margin-bottom:8px">😴 Lifestyle</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">'
-    +statBox(str,'d streak','Day streak 🔥','#ffd166','rgba(255,209,102,0.2)')
-    +statBox(avgSleep||'—','hrs avg','Sleep','#a78bfa','rgba(167,139,250,0.2)')
-    +statBox(avgSteps>0?avgSteps.toLocaleString():'—','steps avg','Daily steps','#4a9eff','rgba(74,158,255,0.15)')
+    // Consistency
+    +'<div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#8b9ab0;margin-bottom:8px">🔥 Consistency</div>'
+    +'<div style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px">'
+    +statBox(str,'d streak','Logging day streak 🔥','#ffd166','rgba(255,209,102,0.2)')
     +'</div>'
 
     +'<div style="text-align:center;font-size:10px;color:#8b9ab0;border-top:1px solid rgba(255,255,255,0.08);padding-top:12px">Tracked with FitTrack · micronay.github.io/fittrack</div>';
