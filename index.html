@@ -12,12 +12,13 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#000;color:#f2f4f7;display:flex;flex-direction:column}
+body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#000;color:#f4f6ee;display:flex;flex-direction:column;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 :root{
-  --bg:#000000;--card:#101216;--input:#1a1c22;
-  --accent:#00d4aa;--blue:#4a9eff;--red:#ff6b6b;--yellow:#ffd166;--purple:#a78bfa;--green:#2fe07a;
-  --txt:#f2f4f7;--muted:#8b93a3;--border:rgba(255,255,255,0.07);
-  --r:16px;--tab-h:62px
+  --bg:#000000;--card:#0d0e10;--input:#15161a;
+  --accent:#e8ff4d;--on-accent:#0c0e00;--blue:#ffffff;--red:#ff6b6b;--yellow:#ffffff;--purple:#ffffff;--green:#e8ff4d;
+  --txt:#f4f6ee;--muted:#878d82;--border:rgba(255,255,255,0.08);
+  --hero-bd:rgba(232,255,77,.22);
+  --r:20px;--tab-h:62px
 }
 
 
@@ -50,12 +51,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 /* CARDS */
 .card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:14px 16px;margin-bottom:12px}
+.card.hero{border-color:var(--hero-bd);box-shadow:inset 0 0 0 1px rgba(232,255,77,.05)}
 .card-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s,transform .1s;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s,transform .1s;-webkit-tap-highlight-color:transparent;font-family:inherit}
 .btn:active{transform:scale(.97);opacity:.85}
-.btn-p{background:var(--accent);color:#0f1923}
+.btn-p{background:var(--accent);color:#0c0e00}
 .btn-s{background:var(--input);color:var(--txt);border:1px solid var(--border)}
 .btn-d{background:rgba(255,107,107,.15);color:var(--red);border:1px solid rgba(255,107,107,.2)}
 .btn-w{width:100%}
@@ -64,7 +66,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 /* FORMS */
 .fg{margin-bottom:14px}
 .lbl{font-size:12px;color:var(--muted);margin-bottom:5px;display:block;font-weight:500}
-.inp,.sel{width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--txt);font-size:15px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none}
+.inp,.sel{width:100%;background:var(--input);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--txt);font-size:15px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none}
 .inp:focus,.sel:focus{border-color:var(--accent)}
 .sel{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b9ab0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -116,8 +118,8 @@ input.sinp:focus{border-color:var(--accent)}
 .mhandle{width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 16px}
 .mtitle{font-size:18px;font-weight:700;margin-bottom:16px}
 .tl-add{background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit}
-.add-fab{width:50px;height:50px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,212,170,.45);transform:translateY(-12px);transition:transform .12s}
-.add-fab svg{width:24px;height:24px;stroke:#04201a;fill:none;stroke-width:2.7;stroke-linecap:round}
+.add-fab{width:50px;height:50px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(232,255,77,.45);transform:translateY(-12px);transition:transform .12s}
+.add-fab svg{width:24px;height:24px;stroke:#0c0e00;fill:none;stroke-width:2.7;stroke-linecap:round}
 .tl-add:active .add-fab{transform:translateY(-12px) scale(.9)}
 .add-choices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:2px}
 .add-choice{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--input);border:1px solid var(--border);border-radius:14px;padding:18px 6px;cursor:pointer;color:var(--txt);font-family:inherit;-webkit-tap-highlight-color:transparent;transition:transform .12s,border-color .12s}
@@ -129,7 +131,7 @@ input.sinp:focus{border-color:var(--accent)}
 /* PILL TABS (modal) */
 .ptabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .pt{padding:6px 14px;border-radius:99px;font-size:13px;font-weight:500;cursor:pointer;background:var(--input);color:var(--muted);border:1px solid var(--border);-webkit-tap-highlight-color:transparent}
-.pt.on{background:var(--accent);color:#0f1923;border-color:transparent}
+.pt.on{background:var(--accent);color:#0c0e00;border-color:transparent}
 
 /* FOOD RESULTS */
 .fr-item{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -141,7 +143,7 @@ input.sinp:focus{border-color:var(--accent)}
 
 /* DAY TYPE PILL */
 .dtp{display:inline-block;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;margin-bottom:12px}
-.gym{background:rgba(0,212,170,.15);color:var(--accent)}
+.gym{background:rgba(232,255,77,.15);color:var(--accent)}
 .run{background:rgba(74,158,255,.15);color:var(--blue)}
 .bad{background:rgba(255,209,102,.15);color:var(--yellow)}
 .rst{background:rgba(139,154,176,.15);color:var(--muted)}
@@ -176,7 +178,7 @@ input.sinp:focus{border-color:var(--accent)}
 .sh-actions{display:flex;align-items:center;gap:9px}
 .sh-icon{width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--txt);cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0}
 .sh-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#2bf0c0);display:flex;align-items:center;justify-content:center;color:#04241d;font-weight:800;font-size:15px;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;border:none;box-shadow:0 2px 12px rgba(0,212,170,.32)}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#caff5a);display:flex;align-items:center;justify-content:center;color:#0c0e00;font-weight:800;font-size:15px;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0;border:none;box-shadow:0 2px 12px rgba(232,255,77,.32)}
 
 /* ACTIVITY CARDS (workout) */
 .act-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:16px}
@@ -236,8 +238,8 @@ input.sinp:focus{border-color:var(--accent)}
 .wd{flex:1;text-align:center}
 .wdc{width:28px;height:28px;border-radius:50%;margin:0 auto 4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
 .wdl{font-size:10px;color:var(--muted)}
-.df{background:var(--accent)!important;border-color:var(--accent)!important;color:#0f1923!important}
-.dp{background:rgba(0,212,170,.25)!important;border-color:var(--accent)!important;color:var(--accent)!important}
+.df{background:var(--accent)!important;border-color:var(--accent)!important;color:#0c0e00!important}
+.dp{background:rgba(232,255,77,.25)!important;border-color:var(--accent)!important;color:var(--accent)!important}
 
 ::-webkit-scrollbar{width:0}
 </style>
@@ -265,29 +267,29 @@ input.sinp:focus{border-color:var(--accent)}
           <label class="avatar" for="t5" title="Settings">A</label>
         </div>
       </div>
-      <div class="card">
+      <div class="card hero">
         <div id="dtp" class="dtp rst">Rest Day</div>
         <div class="ring-hero" onclick="toggleRingPct()">
           <svg class="rings" viewBox="0 0 120 120" aria-hidden="true">
             <defs>
               <linearGradient id="gradCal" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#00d4aa"/><stop offset="1" stop-color="#3df0c4"/>
+                <stop offset="0" stop-color="#e8ff4d"/><stop offset="1" stop-color="#3df0c4"/>
               </linearGradient>
               <linearGradient id="gradWater" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#4a9eff"/><stop offset="1" stop-color="#22d3ee"/>
               </linearGradient>
             </defs>
             <g transform="rotate(-90 60 60)">
-              <circle class="rt" cx="60" cy="60" r="54" stroke-width="11" stroke="rgba(0,212,170,.13)"/>
-              <circle class="rf" id="ring" style="--rgw:rgba(0,212,170,.55)" cx="60" cy="60" r="54" stroke="url(#gradCal)" stroke-width="11" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
+              <circle class="rt" cx="60" cy="60" r="54" stroke-width="11" stroke="rgba(232,255,77,.13)"/>
+              <circle class="rf" id="ring" style="--rgw:rgba(232,255,77,.55)" cx="60" cy="60" r="54" stroke="url(#gradCal)" stroke-width="11" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
               <circle class="rt" cx="60" cy="60" r="41" stroke-width="11" stroke="rgba(74,158,255,.13)"/>
               <circle class="rf" id="ring-water" style="--rgw:rgba(74,158,255,.55)" cx="60" cy="60" r="41" stroke="url(#gradWater)" stroke-width="11" stroke-dasharray="257.6" stroke-dashoffset="257.6"/>
             </g>
           </svg>
           <div class="ring-legend">
             <div class="rl-item">
-              <span class="rl-dot" style="background:#00d4aa;--d:rgba(0,212,170,.6)"></span>
-              <div><div class="rl-lbl">Calories</div><div class="rl-val"><span class="rl-abs"><span id="h-cal">0</span> <span class="rl-goal">/ <span id="h-goal">2000</span></span></span><span class="rl-pct" id="pct-cal" style="color:#00d4aa">0%</span></div></div>
+              <span class="rl-dot" style="background:#e8ff4d;--d:rgba(232,255,77,.6)"></span>
+              <div><div class="rl-lbl">Calories</div><div class="rl-val"><span class="rl-abs"><span id="h-cal">0</span> <span class="rl-goal">/ <span id="h-goal">2000</span></span></span><span class="rl-pct" id="pct-cal" style="color:#e8ff4d">0%</span></div></div>
             </div>
             <div class="rl-item">
               <span class="rl-dot" style="background:#4a9eff;--d:rgba(74,158,255,.6)"></span>
@@ -297,7 +299,7 @@ input.sinp:focus{border-color:var(--accent)}
         </div>
         <div class="ring-hint">Tap rings to flip to %</div>
         <div class="ring-macros">
-          <div class="mi"><div class="mv" style="color:var(--red)" id="h-p">0g</div><div class="ml">Protein</div></div>
+          <div class="mi"><div class="mv" style="color:var(--accent)" id="h-p">0g</div><div class="ml">Protein</div></div>
           <div class="mi"><div class="mv" style="color:var(--yellow)" id="h-c">0g</div><div class="ml">Carbs</div></div>
           <div class="mi"><div class="mv" style="color:var(--green)" id="h-f">0g</div><div class="ml">Fat</div></div>
           <div class="mi"><div class="mv" style="color:var(--purple)" id="h-fi">0g</div><div class="ml">Fibre</div></div>
@@ -375,8 +377,8 @@ input.sinp:focus{border-color:var(--accent)}
         <div style="display:flex;align-items:center;gap:18px">
           <svg width="108" height="108" viewBox="0 0 120 120" style="flex-shrink:0;overflow:visible">
             <g transform="rotate(-90 60 60)">
-              <circle class="rt" cx="60" cy="60" r="52" stroke-width="12" stroke="rgba(0,212,170,.13)"/>
-              <circle class="rf" id="ring-meals" style="--rgw:rgba(0,212,170,.55)" cx="60" cy="60" r="52" stroke="url(#gradCal)" stroke-width="12" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+              <circle class="rt" cx="60" cy="60" r="52" stroke-width="12" stroke="rgba(232,255,77,.13)"/>
+              <circle class="rf" id="ring-meals" style="--rgw:rgba(232,255,77,.55)" cx="60" cy="60" r="52" stroke="url(#gradCal)" stroke-width="12" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
             </g>
           </svg>
           <div style="flex:1;min-width:0">
@@ -386,7 +388,7 @@ input.sinp:focus{border-color:var(--accent)}
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
-          <div class="macro-chip"><div class="mc-v" style="color:var(--red)" id="mc-p">0g</div><div class="mc-l">Protein</div><div class="pb" style="margin-top:6px"><div class="pf" id="mc-pb" style="width:0%;background:var(--red)"></div></div></div>
+          <div class="macro-chip"><div class="mc-v" style="color:var(--accent)" id="mc-p">0g</div><div class="mc-l">Protein</div><div class="pb" style="margin-top:6px"><div class="pf" id="mc-pb" style="width:0%;background:var(--accent)"></div></div></div>
           <div class="macro-chip"><div class="mc-v" style="color:var(--yellow)" id="mc-c">0g</div><div class="mc-l">Carbs</div><div class="pb" style="margin-top:6px"><div class="pf" id="mc-cb" style="width:0%;background:var(--yellow)"></div></div></div>
           <div class="macro-chip"><div class="mc-v" style="color:var(--green)" id="mc-f">0g</div><div class="mc-l">Fat</div><div class="pb" style="margin-top:6px"><div class="pf" id="mc-fb" style="width:0%;background:var(--green)"></div></div></div>
           <div class="macro-chip"><div class="mc-v" style="color:var(--purple)" id="mc-fi">0g</div><div class="mc-l">Fibre</div><div class="pb" style="margin-top:6px"><div class="pf" id="mc-fib" style="width:0%;background:var(--purple)"></div></div></div>
@@ -561,7 +563,7 @@ input.sinp:focus{border-color:var(--accent)}
         </div>
 
         <!-- BF preview -->
-        <div id="bf-preview" style="display:none;background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.2);border-radius:10px;padding:12px 14px;margin-bottom:14px"></div>
+        <div id="bf-preview" style="display:none;background:rgba(232,255,77,0.06);border:1px solid rgba(232,255,77,0.2);border-radius:10px;padding:12px 14px;margin-bottom:14px"></div>
 
         <button class="btn btn-p btn-w" onclick="saveBody()">Save Measurements</button>
         <button class="btn btn-s btn-w" style="margin-top:10px" onclick="closeModal('body-modal')">Cancel</button>
@@ -867,7 +869,7 @@ input.sinp:focus{border-color:var(--accent)}
       <div id="prep-ing-list" style="margin-bottom:12px"></div>
 
       <!-- Totals preview -->
-      <div id="prep-totals" style="display:none;background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.2);border-radius:10px;padding:12px;margin-bottom:14px"></div>
+      <div id="prep-totals" style="display:none;background:rgba(232,255,77,0.06);border:1px solid rgba(232,255,77,0.2);border-radius:10px;padding:12px;margin-bottom:14px"></div>
 
       <button class="btn btn-p btn-w" onclick="saveMealPrep()">💾 Save Recipe</button>
     </div>
@@ -896,7 +898,7 @@ input.sinp:focus{border-color:var(--accent)}
   <div class="ms">
     <div class="mhandle"></div>
     <div class="mtitle">✨ Progress Card</div>
-    <div id="progress-card-render" style="background:linear-gradient(135deg,#0f1923 0%,#1a2d3e 100%);border-radius:16px;padding:24px;margin-bottom:16px;border:1px solid rgba(0,212,170,0.3)"></div>
+    <div id="progress-card-render" style="background:linear-gradient(135deg,#0c0e00 0%,#1a2d3e 100%);border-radius:16px;padding:24px;margin-bottom:16px;border:1px solid rgba(232,255,77,0.3)"></div>
     <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px">Screenshot this card to share your progress</div>
     <button class="btn btn-s btn-w" onclick="closeModal('progress-card-modal')">Close</button>
   </div>
@@ -1532,7 +1534,7 @@ function renderWkEx(){
 
     // Badge
     var badge='';
-    if(isSuper) badge='<span style="font-size:10px;background:rgba(0,212,170,0.15);color:var(--accent);border-radius:4px;padding:2px 6px;font-weight:600;margin-left:6px">SUPERSET</span>';
+    if(isSuper) badge='<span style="font-size:10px;background:rgba(232,255,77,0.15);color:var(--accent);border-radius:4px;padding:2px 6px;font-weight:600;margin-left:6px">SUPERSET</span>';
     if(isDrop)  badge='<span style="font-size:10px;background:rgba(74,158,255,0.15);color:var(--blue);border-radius:4px;padding:2px 6px;font-weight:600;margin-left:6px">DROP SET</span>';
 
     // Set rows
@@ -1696,13 +1698,13 @@ function calcBFEstimates(wt,nk,wa,nv,hp,h,age,sex){
 function bfCategory(bf,sex){
   if(sex==='male'){
     if(bf<6)return{label:'Essential fat',col:'#4a9eff'};
-    if(bf<14)return{label:'Athletic',col:'#00d4aa'};
+    if(bf<14)return{label:'Athletic',col:'#e8ff4d'};
     if(bf<18)return{label:'Fitness',col:'#06d6a0'};
     if(bf<25)return{label:'Average',col:'#ffd166'};
     return{label:'Above average',col:'#ff6b6b'};
   } else {
     if(bf<14)return{label:'Essential fat',col:'#4a9eff'};
-    if(bf<21)return{label:'Athletic',col:'#00d4aa'};
+    if(bf<21)return{label:'Athletic',col:'#e8ff4d'};
     if(bf<25)return{label:'Fitness',col:'#06d6a0'};
     if(bf<32)return{label:'Average',col:'#ffd166'};
     return{label:'Above average',col:'#ff6b6b'};
@@ -2429,7 +2431,7 @@ function drawLineChart(canvasId,emptyId,labels,datasets,yLabel){
     // highlighted last point
     var last=pts[pts.length-1];
     ctx.beginPath();ctx.arc(last.x,last.y,4.5,0,Math.PI*2);ctx.fillStyle=ds.color;ctx.fill();
-    ctx.beginPath();ctx.arc(last.x,last.y,1.9,0,Math.PI*2);ctx.fillStyle='#0f1923';ctx.fill();
+    ctx.beginPath();ctx.arc(last.x,last.y,1.9,0,Math.PI*2);ctx.fillStyle='#0c0e00';ctx.fill();
   });
 }
 
@@ -2467,7 +2469,7 @@ function renderSummary(){
   // Weight chart
   var bodyLogs=gb();
   var wtData=dates.map(function(d){var l=bodyLogs.find(function(b){return b.date===d});return l&&l.wt?l.wt:0});
-  drawLineChart('chart-weight','chart-weight-empty',dates,[{data:wtData,color:'#00d4aa'}]);
+  drawLineChart('chart-weight','chart-weight-empty',dates,[{data:wtData,color:'#e8ff4d'}]);
 
   // Calorie chart
   var calData=dates.map(function(d){
@@ -2583,16 +2585,16 @@ function openModal_progressCard(days){
   var html=
     '<div style="text-align:center;margin-bottom:18px">'
     +'<div style="font-size:28px;margin-bottom:6px">'+periodEmoji+'</div>'
-    +'<div style="font-size:20px;font-weight:800;color:#00d4aa;letter-spacing:-.5px">'+esc(name)+'\'s '+periodLabel+' Report</div>'
+    +'<div style="font-size:20px;font-weight:800;color:#e8ff4d;letter-spacing:-.5px">'+esc(name)+'\'s '+periodLabel+' Report</div>'
     +'<div style="font-size:11px;color:#8b9ab0;margin-top:4px">'+fromDate+' – '+toDate+'</div>'
     +'</div>'
 
     // Body composition
     +'<div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#8b9ab0;margin-bottom:8px">⚖️ Body</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
-    +statBox(latest.wt||'—','kg','Current weight','#00d4aa','rgba(0,212,170,0.2)')
-    +'<div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(0,212,170,0.15)">'
-    +'<div style="font-size:22px;font-weight:800;color:#00d4aa">'+(wtChange!==null?(wtChange>0?'+':'')+wtChange:'—')+'</div>'
+    +statBox(latest.wt||'—','kg','Current weight','#e8ff4d','rgba(232,255,77,0.2)')
+    +'<div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(232,255,77,0.15)">'
+    +'<div style="font-size:22px;font-weight:800;color:#e8ff4d">'+(wtChange!==null?(wtChange>0?'+':'')+wtChange:'—')+'</div>'
     +'<div style="font-size:10px;color:#8b9ab0;margin-top:1px">kg</div>'
     +'<div style="font-size:11px;color:#8b9ab0;margin-top:3px">Weight change</div></div>'
     +statBox(latest.bf||'—','%','Body fat','#4a9eff','rgba(74,158,255,0.2)')
@@ -2602,7 +2604,7 @@ function openModal_progressCard(days){
     +'<div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#8b9ab0;margin-bottom:8px">🍽️ Nutrition (avg/day)</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
     +statBox(avgCals,'kcal','Calories','#ffd166','rgba(255,209,102,0.2)')
-    +statBox(goalHitPct+'%','','Calorie goal hit','#00d4aa','rgba(0,212,170,0.15)')
+    +statBox(goalHitPct+'%','','Calorie goal hit','#e8ff4d','rgba(232,255,77,0.15)')
     +statBox(mdays+'d','','Logged','#4a9eff','rgba(74,158,255,0.15)')
     +statBox(avgP+'g','','Protein','#ff6b6b','rgba(255,107,107,0.2)')
     +statBox(avgC+'g','','Carbs','#ffd166','rgba(255,209,102,0.15)')
@@ -2613,7 +2615,7 @@ function openModal_progressCard(days){
     +'<div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#8b9ab0;margin-bottom:8px">💪 Training</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
     +statBox(wkCount,'','Workouts','#4a9eff','rgba(74,158,255,0.2)')
-    +statBox(totalVol>0?Math.round(totalVol).toLocaleString():'—','kg','Total volume','#00d4aa','rgba(0,212,170,0.15)')
+    +statBox(totalVol>0?Math.round(totalVol).toLocaleString():'—','kg','Total volume','#e8ff4d','rgba(232,255,77,0.15)')
     +statBox(pbCount,'','PBs all time 🏆','#ffd166','rgba(255,209,102,0.2)')
     +'</div>'
 
