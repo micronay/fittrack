@@ -420,7 +420,7 @@ input.sinp:focus{border-color:var(--accent)}
       <div class="card" id="wk-active" style="display:none">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
           <div>
-            <div class="card-title" style="margin-bottom:2px">Active Workout</div>
+            <div class="card-title" style="margin-bottom:2px" id="wk-active-title">Active Workout</div>
             <div id="wk-timer" style="font-size:22px;font-weight:700;color:var(--blue)">0:00</div>
           </div>
           <button class="btn btn-d btn-sm" onclick="finishWorkout()">✓ Finish</button>
@@ -433,7 +433,7 @@ input.sinp:focus{border-color:var(--accent)}
       <div id="wk-start">
         <div class="sec-lbl">Start a session</div>
         <div class="act-grid">
-          <div class="act-card" onclick="startWorkout('Gym')">
+          <div class="act-card" onclick="openModal('split-modal')">
             <div class="act-ico" style="background:#3b82f6"><svg viewBox="0 0 24 24"><path d="M6 12h12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><path d="M6 7v10M18 7v10"/></svg></div>
             <div class="act-name">Gym</div><div class="act-sub">Strength training</div>
           </div>
@@ -986,6 +986,40 @@ input.sinp:focus{border-color:var(--accent)}
 </div>
 
 <!-- EXERCISE MODAL -->
+<!-- GYM SPLIT MODAL -->
+<div class="mo" id="split-modal">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div class="mtitle">Which session?</div>
+    <div class="add-choices" style="grid-template-columns:1fr 1fr 1fr">
+      <button class="add-choice" onclick="startGym('Push')"><span class="add-l">Push</span><span class="add-s">Chest · sho · tri</span></button>
+      <button class="add-choice" onclick="startGym('Pull')"><span class="add-l">Pull</span><span class="add-s">Back · biceps</span></button>
+      <button class="add-choice" onclick="startGym('Legs')"><span class="add-l">Legs</span><span class="add-s">Quads · ham · glutes</span></button>
+    </div>
+    <button class="btn btn-s btn-w" style="margin-top:12px" onclick="startGym('')">Skip — just log as Gym</button>
+    <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('split-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- WORKOUT DETAIL MODAL -->
+<div class="mo" id="wk-detail-modal">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div id="wkd-title" class="mtitle" style="margin-bottom:4px">Workout</div>
+    <div id="wkd-meta" style="font-size:12px;color:var(--muted);margin-bottom:14px"></div>
+    <div id="wkd-split" style="display:none;margin-bottom:16px">
+      <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px">Label this session</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="setWkSplit('Push')">Push</button>
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="setWkSplit('Pull')">Pull</button>
+        <button class="btn btn-s btn-sm" style="flex:1" onclick="setWkSplit('Legs')">Legs</button>
+      </div>
+    </div>
+    <div id="wkd-body"></div>
+    <button class="btn btn-s btn-w" style="margin-top:14px" onclick="closeModal('wk-detail-modal')">Close</button>
+  </div>
+</div>
+
 <div class="mo" id="ex-modal">
   <div class="ms">
     <div class="mhandle"></div>
@@ -1378,14 +1412,21 @@ function pickExName(name){
 
 // ── WORKOUT ───────────────────────────────────────────────────
 var AW=null,WTI=null,WE=0,pendingSets=[];
-function startWorkout(type){
-  AW={type:type,start:Date.now(),exercises:[]};WE=0;
+function startWorkout(type,split){
+  AW={type:type,split:split||'',start:Date.now(),exercises:[]};WE=0;
   document.getElementById('wk-start').style.display='none';
   document.getElementById('wk-active').style.display='block';
+  set('wk-active-title',wkTitle(AW));
   if(WTI)clearInterval(WTI);
   WTI=setInterval(tickWk,1000);
   tickWk();
   renderWkEx();renderLibExercises();
+}
+function startGym(split){closeModal('split-modal');startWorkout('Gym',split);}
+function wkTitle(wk){
+  if(wk.split)return wk.split;
+  var ex=(wk.exercises||[]).map(function(e){return e.name});
+  return wk.type+(ex.length?' · '+ex[0]:'');
 }
 // Derive elapsed time from the start timestamp (not a tick counter), so a
 // locked screen / backgrounded tab — which freezes JS timers — can't undercount.
@@ -1412,6 +1453,7 @@ function restoreAW(){
   AW=raw;if(!AW.exercises)AW.exercises=[];
   document.getElementById('wk-start').style.display='none';
   document.getElementById('wk-active').style.display='block';
+  set('wk-active-title',wkTitle(AW));
   if(WTI)clearInterval(WTI);
   WTI=setInterval(tickWk,1000);tickWk();
   renderWkEx();renderLibExercises();
@@ -1578,10 +1620,12 @@ function renderWkEx(){
 
     // Add set hint
     var addSetHint=isSuper?'+ Add Round':'+ Add '+(isDrop?'Drop ':'')+'Set';
+    var lp=(type!=='superset')?lastPerf(ex.name):null;
+    var lastLine=lp?'<div style="font-size:11px;color:var(--accent);margin-top:3px">Last ('+esc(lp.dateD)+'): '+esc(lp.txt)+'</div>':'';
 
     return '<div style="background:var(--input);border-radius:10px;padding:12px;margin-bottom:10px;border:1px solid var(--border)">'
       +'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">'
-      +'<div>'+titleLine+badge+'</div>'
+      +'<div style="min-width:0">'+titleLine+badge+lastLine+'</div>'
       +'<button onclick="removeExFromWorkout('+ei+')" style="background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;padding:2px 6px;border-radius:6px;border:1px solid rgba(255,107,107,.3);-webkit-tap-highlight-color:transparent;flex-shrink:0;margin-left:8px">Remove</button>'
       +'</div>'
       +setRows
@@ -1630,7 +1674,7 @@ function renderWkHist(){
     var totalSets=(wk.exercises||[]).reduce(function(a,e){return a+e.sets.length},0);
     var sub=(wk.dateD||wk.date)+(exNames.length?' · '+exNames.length+' exercises':'')+(totalSets?' · '+totalSets+' sets':'');
     return '<div class="wi"><div class="wb">'+wkEm(wk.type)+'</div>'
-      +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">'+esc(wk.type)+(exNames.length?' · '+esc(exNames[0]):'')+'</div>'
+      +'<div onclick="openWkDetail('+i+')" style="flex:1;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent"><div style="font-size:14px;font-weight:600">'+esc(wkTitle(wk))+'</div>'
       +'<div style="font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sub+'</div></div>'
       +'<div onclick="editWkDur('+i+')" title="Tap to edit duration" style="font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent">'+dur+' ✎</div>'
       +'<button onclick="delWk('+i+')" class="del">×</button></div>';
@@ -1656,6 +1700,49 @@ function editWkDur(i){
   w[i].dur=mins*60;sw(w);renderWkHist();updateHome();toast('✓ Duration updated — calories recalculated');
 }
 function wkEm(t){return{Gym:'🏋️',Run:'🏃',Badminton:'🏸',Other:'⚡'}[t]||'💪'}
+
+// ── WORKOUT DETAIL + LAST-TIME ────────────────────────────────
+function fmtSets(sets){
+  return (sets||[]).filter(function(s){return (s.w||s.r)}).map(function(s){return (s.w||0)+'×'+(s.r||0)}).join(', ');
+}
+function lastPerf(name){
+  var w=gw();
+  for(var i=0;i<w.length;i++){
+    var exs=w[i].exercises||[];
+    for(var j=0;j<exs.length;j++){
+      if(exs[j].name===name&&(exs[j].type||'normal')!=='superset'){
+        var txt=fmtSets(exs[j].sets);
+        if(txt)return {dateD:(w[i].dateD||w[i].date||''),txt:txt};
+      }
+    }
+  }
+  return null;
+}
+var wkdIdx=-1;
+function openWkDetail(i){
+  var w=gw(),wk=w[i];if(!wk)return;
+  wkdIdx=i;
+  set('wkd-title',wkTitle(wk));
+  var dur=wk.dur?Math.floor(wk.dur/60)+' min':'—';
+  document.getElementById('wkd-meta').textContent=(wk.dateD||wk.date||'')+' · '+dur;
+  document.getElementById('wkd-split').style.display=(wk.type==='Gym')?'block':'none';
+  var exs=wk.exercises||[];
+  var html=exs.length?exs.map(function(ex){
+    if((ex.type||'normal')==='superset'){
+      var r=(ex.sets||[]).map(function(s,k){return '<div style="font-size:13px;margin-top:3px">R'+(k+1)+': <span style="color:var(--accent)">A</span> '+(s.wa||0)+'×'+(s.ra||0)+' · <span style="color:var(--blue)">B</span> '+(s.wb||0)+'×'+(s.rb||0)+'</div>'}).join('');
+      return '<div style="margin-bottom:14px"><div style="font-size:14px;font-weight:700">'+esc(ex.name)+' + '+esc(ex.name2||'')+'</div>'+r+'</div>';
+    }
+    var chips=(ex.sets||[]).map(function(s){return '<span style="display:inline-block;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:3px 9px;margin:4px 5px 0 0;font-size:13px">'+(s.w||0)+'<span style="color:var(--muted)">kg</span> × '+(s.r||0)+'</span>'}).join('');
+    return '<div style="margin-bottom:14px"><div style="font-size:14px;font-weight:700;margin-bottom:2px">'+esc(ex.name)+'</div><div>'+(chips||'<span style="font-size:12px;color:var(--muted)">No sets logged</span>')+'</div></div>';
+  }).join(''):'<p style="color:var(--muted);font-size:13px">No exercises were logged for this session.</p>';
+  document.getElementById('wkd-body').innerHTML=html;
+  openModal('wk-detail-modal');
+}
+function setWkSplit(split){
+  var w=gw();if(!w[wkdIdx])return;
+  w[wkdIdx].split=split;sw(w);renderWkHist();
+  set('wkd-title',wkTitle(w[wkdIdx]));toast('✓ Labelled '+split);
+}
 
 // ── BODY ──────────────────────────────────────────────────────
 // ── BODY ──────────────────────────────────────────────────────
