@@ -926,7 +926,8 @@ input.sinp:focus{border-color:var(--accent)}
     <!-- MANUAL TAB -->
     <div id="mt-manual" style="display:none">
       <div class="fg"><label class="lbl">Meal type</label><select id="m-type-m" class="sel"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div>
-      <div class="fg"><label class="lbl">Food name</label><input type="text" id="m-nm" class="inp" placeholder="e.g. Chicken breast"></div>
+      <div class="fg"><label class="lbl">Food name</label><input type="text" id="m-nm" class="inp" placeholder="Start typing — e.g. Chicken breast" oninput="onMealNameInput()" autocomplete="off"></div>
+      <div id="m-suggest" style="display:none;border:1px solid var(--border);border-radius:10px;overflow-y:auto;max-height:232px;margin-top:-4px;margin-bottom:12px;background:var(--card)"></div>
       <div class="fr">
         <div class="fg"><label class="lbl">Calories (kcal)</label><input type="number" id="m-kc" class="inp" placeholder="300" inputmode="numeric"></div>
         <div class="fg"><label class="lbl">Serving (g)</label><input type="number" id="m-sv" class="inp" placeholder="100" inputmode="numeric"></div>
@@ -1095,7 +1096,7 @@ var QF=[
 // ── MODAL ─────────────────────────────────────────────────────
 function openModal(id){
   document.getElementById(id).classList.add('on');
-  if(id==='meal-modal') renderQuick();
+  if(id==='meal-modal'){ renderQuick(); hideMealSuggest(); }
   if(id==='ex-modal'){
     pendingSets=[{w:'',r:''}];currentExType='normal';renderSets();
     document.getElementById('ex-nm2-wrap').style.display='none';
@@ -1168,12 +1169,66 @@ function pickFood(i){
 }
 
 // ── MANUAL MEAL ───────────────────────────────────────────────
+// ── FOOD NAME AUTOCOMPLETE ────────────────────────────────────
+// Sources, in priority order: My Foods library, foods logged before
+// (across all days in storage), then quick-food presets. Deduped by name.
+function allFoods(){
+  var map={},out=[];
+  function add(f){if(!f||!f.name)return;var k=f.name.toLowerCase();if(map[k])return;map[k]=1;out.push(f);}
+  getLib().forEach(function(x){add({name:x.name,cals:x.cals,prot:x.prot,carb:x.carb,fat:x.fat,fibre:x.fibre||0,serv:x.serv||100,em:'💾'});});
+  try{
+    for(var i=0;i<localStorage.length;i++){
+      var key=localStorage.key(i);
+      if(key&&key.indexOf('ft_m_')===0){
+        JSON.parse(localStorage.getItem(key)||'[]').forEach(function(x){
+          add({name:x.name,cals:x.cals,prot:x.prot,carb:x.carb,fat:x.fat,fibre:x.fibre||0,serv:x.serv||100,em:x.em||'🍽️'});
+        });
+      }
+    }
+  }catch(e){}
+  QF.forEach(function(x){add({name:x.n,cals:x.k,prot:x.p,carb:x.c,fat:x.f,fibre:0,serv:100,em:x.e});});
+  return out;
+}
+function foodSuggest(q){
+  q=(q||'').trim().toLowerCase();
+  if(q.length<2)return [];
+  var starts=[],contains=[];
+  allFoods().forEach(function(f){var n=f.name.toLowerCase();if(n.indexOf(q)===0)starts.push(f);else if(n.indexOf(q)>=0)contains.push(f);});
+  return starts.concat(contains).slice(0,7);
+}
+var mSuggestList=[];
+function onMealNameInput(){
+  mSuggestList=foodSuggest(document.getElementById('m-nm').value);
+  var box=document.getElementById('m-suggest');
+  if(!mSuggestList.length){box.style.display='none';box.innerHTML='';return;}
+  box.innerHTML=mSuggestList.map(function(f,i){
+    return '<button type="button" onclick="pickFood('+i+')" style="display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:9px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:inherit">'
+      +'<span style="font-size:15px;flex-shrink:0">'+(f.em||'🍽️')+'</span>'
+      +'<span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:600;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(f.name)+'</span>'
+      +'<span style="font-size:11px;color:var(--muted)">'+Math.round(f.cals||0)+' kcal · P'+r1(f.prot||0)+' C'+r1(f.carb||0)+' F'+r1(f.fat||0)+'</span></span>'
+      +'</button>';
+  }).join('');
+  box.style.display='block';
+}
+function pickFood(i){
+  var f=mSuggestList[i];if(!f)return;
+  document.getElementById('m-nm').value=f.name;
+  document.getElementById('m-kc').value=Math.round(f.cals||0);
+  document.getElementById('m-sv').value=f.serv||100;
+  document.getElementById('m-pr').value=f.prot||0;
+  document.getElementById('m-ca').value=f.carb||0;
+  document.getElementById('m-ft').value=f.fat||0;
+  document.getElementById('m-fi').value=f.fibre||0;
+  hideMealSuggest();
+}
+function hideMealSuggest(){var b=document.getElementById('m-suggest');if(b){b.style.display='none';b.innerHTML='';}}
 function addManual(){
   var nm=document.getElementById('m-nm').value.trim(),kc=parseFloat(document.getElementById('m-kc').value)||0;
   if(!nm||!kc){toast('Enter name & calories');return}
   addEntry(nm,document.getElementById('m-type-m').value,'✏️',kc,parseFloat(document.getElementById('m-pr').value)||0,parseFloat(document.getElementById('m-ca').value)||0,parseFloat(document.getElementById('m-ft').value)||0,parseFloat(document.getElementById('m-sv').value)||100,parseFloat(document.getElementById('m-fi').value)||0);
   closeModal('meal-modal');
   ['m-nm','m-kc','m-sv','m-pr','m-ca','m-ft','m-fi'].forEach(function(id){document.getElementById(id).value=''});
+  hideMealSuggest();
 }
 
 // ── BARCODE SCANNER ───────────────────────────────────────────
