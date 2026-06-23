@@ -1404,14 +1404,15 @@ function openMealAdd(sec){
 
 // ── EXERCISE LIBRARY ──────────────────────────────────────────
 var EX_LIB={
-  chest:['Bench Press','Incline Bench Press','Decline Bench Press','Dumbbell Bench Press','Incline Dumbbell Press','Decline Dumbbell Press','Dumbbell Flyes','Incline Dumbbell Flyes','Cable Crossover','Low-to-High Cable Flye','High-to-Low Cable Flye','Pec Deck Machine','Machine Chest Press','Smith Machine Bench Press','Push-Up','Incline Push-Up','Decline Push-Up','Plyometric Push-Up','Chest Dip','Close-Grip Bench Press','Landmine Press','Svend Press'],
-  back:['Deadlift','Rack Pull','Trap Bar Deadlift','Pull-Up','Chin-Up','Wide-Grip Pull-Up','Lat Pulldown','Close-Grip Lat Pulldown','Barbell Row','Pendlay Row','T-Bar Row','Seated Cable Row','Single-Arm Dumbbell Row','Chest-Supported Row','Meadows Row','Inverted Row','Face Pull','Straight-Arm Pulldown','Dumbbell Pullover','Cable Pullover','Hyperextension','Good Morning'],
-  shoulders:['Overhead Press','Seated Dumbbell Press','Standing Dumbbell Press','Arnold Press','Push Press','Machine Shoulder Press','Smith Machine Press','Behind-the-Neck Press','Z Press','Dumbbell Lateral Raise','Cable Lateral Raise','Machine Lateral Raise','Front Raise','Cable Front Raise','Plate Front Raise','Rear Delt Fly','Bent-Over Lateral Raise','Reverse Pec Deck','Cable Rear Delt Fly','Upright Row','Barbell Shrug','Dumbbell Shrug'],
-  arms:['Barbell Curl','EZ-Bar Curl','Dumbbell Curl','Incline Dumbbell Curl','Hammer Curl','Cable Hammer Curl','Preacher Curl','Concentration Curl','Spider Curl','Zottman Curl','Cable Curl','Reverse Curl','Tricep Pushdown','Rope Pushdown','Skull Crushers','Overhead Tricep Extension','Dumbbell Overhead Extension','Tricep Kickback','Bench Dip','Diamond Push-Up','Dips','Close-Grip Bench Press','Wrist Curl','Reverse Wrist Curl'],
-  legs:['Squat','Front Squat','Goblet Squat','Hack Squat','Box Squat','Smith Machine Squat','Leg Press','Bulgarian Split Squat','Walking Lunge','Reverse Lunge','Step-Up','Romanian Deadlift','Stiff-Leg Deadlift','Sumo Deadlift','Leg Curl','Lying Leg Curl','Seated Leg Curl','Nordic Curl','Leg Extension','Glute Bridge','Hip Thrust','Standing Calf Raise','Seated Calf Raise','Adductor Machine'],
-  core:['Plank','Side Plank','Plank Up-Down','Hollow Body Hold','Crunch','Reverse Crunch','Bicycle Crunch','Oblique Crunch','Sit-Up','Decline Sit-Up','V-Up','Leg Raise','Hanging Leg Raise','Hanging Knee Raise','Flutter Kicks','Mountain Climbers','Russian Twist','Cable Crunch','Cable Woodchopper','Pallof Press','Ab Wheel Rollout','Dead Bug','Windshield Wipers','Dragon Flag'],
+  chest:['Bench Press','Incline Press','Decline Press','Chest Fly','Incline Fly','Cable Crossover','Pec Deck','Push-Up','Chest Dip','Close-Grip Bench Press','Landmine Press'],
+  back:['Deadlift','Rack Pull','Pull-Up','Chin-Up','Lat Pulldown','Row','Pendlay Row','T-Bar Row','Seated Row','Single-Arm Row','Chest-Supported Row','Meadows Row','Inverted Row','Face Pull','Straight-Arm Pulldown','Pullover','Hyperextension','Good Morning'],
+  shoulders:['Overhead Press','Arnold Press','Push Press','Behind-the-Neck Press','Z Press','Lateral Raise','Front Raise','Rear Delt Fly','Reverse Pec Deck','Upright Row','Shrug'],
+  arms:['Bicep Curl','Incline Curl','Hammer Curl','Preacher Curl','Concentration Curl','Spider Curl','Zottman Curl','Reverse Curl','Tricep Pushdown','Skull Crushers','Overhead Tricep Extension','Tricep Kickback','Dips','Diamond Push-Up','Close-Grip Bench Press','Wrist Curl','Reverse Wrist Curl'],
+  legs:['Squat','Front Squat','Goblet Squat','Hack Squat','Box Squat','Leg Press','Bulgarian Split Squat','Lunge','Reverse Lunge','Step-Up','Romanian Deadlift','Stiff-Leg Deadlift','Sumo Deadlift','Leg Curl','Nordic Curl','Leg Extension','Glute Bridge','Hip Thrust','Calf Raise','Adductor'],
+  core:['Plank','Side Plank','Hollow Body Hold','Crunch','Reverse Crunch','Bicycle Crunch','Oblique Crunch','Sit-Up','V-Up','Leg Raise','Hanging Leg Raise','Hanging Knee Raise','Flutter Kicks','Mountain Climbers','Russian Twist','Woodchopper','Pallof Press','Ab Wheel Rollout','Dead Bug','Windshield Wipers','Dragon Flag'],
   cardio:['Treadmill Run','Outdoor Run','Incline Walk','Sprint Intervals','Rowing Machine','Stationary Bike','Assault Bike','Cycling','Elliptical','Stair Climber','SkiErg','Versaclimber','Swimming','Jump Rope','Box Jumps','Burpees','High Knees','Jumping Jacks','Kettlebell Swing','Battle Ropes','Sled Push','Sled Pull']
 };
+var EQUIP=['Barbell','Dumbbell','Machine','Smith Machine','Cable','Free Weight','Bodyweight'];
 var currentLibTab='chest';
 
 function libTab(part,el){
@@ -1431,7 +1432,7 @@ function renderLibExercises(){
 }
 function quickAddEx(name){
   if(!AW){toast('Start a workout first');return}
-  AW.exercises.push({name:name,type:'normal',sets:defaultSetsFor(name)});
+  AW.exercises.push({name:name,type:'normal',equip:'',sets:defaultSetsFor(name,'')});
   renderWkEx();toast('✓ '+name+' added');
 }
 
@@ -1590,8 +1591,8 @@ function saveExercise(){
     var sets=pendingSets.map(function(s,i){
       return{w:parseFloat(document.getElementById('sw'+i).value)||0,r:parseInt(document.getElementById('sr'+i).value)||0};
     }).filter(function(s){return s.r>0});
-    if(!sets.length)sets=defaultSetsFor(nm);
-    AW.exercises.push({name:nm,type:type,sets:sets});
+    if(!sets.length)sets=defaultSetsFor(nm,'');
+    AW.exercises.push({name:nm,type:type,equip:'',sets:sets});
   }
 
   renderWkEx();closeModal('ex-modal');
@@ -1622,7 +1623,7 @@ function renderWkEx(){
     var ssOn=(!isSuper&&ex.ss!=null);
     var ssLetter=ssOn?ssLetters[ex.ss]:'';
     var ssColor=ssOn?ssColors[ex.ss]:'';
-    var lp=(type!=='superset')?lastPerf(ex.name):null;
+    var lp=(type!=='superset')?lastPerf(ex.name,ex.equip):null;
 
     // Badge
     var badge='';
@@ -1681,10 +1682,11 @@ function renderWkEx(){
     // Add set hint
     var addSetHint=isSuper?'+ Add Round':'+ Add '+(isDrop?'Drop ':'')+'Set';
     var lastLine=lp?'<div style="font-size:11px;color:var(--accent);margin-top:3px">Last ('+esc(lp.dateD)+'): '+esc(lp.txt)+'</div>':'';
+    var equipSel=isSuper?'':'<select onchange="setExEquip('+ei+',this.value)" style="margin-top:5px;background:var(--card);border:1px solid var(--border);color:'+(ex.equip?'var(--txt)':'var(--muted)')+';border-radius:7px;padding:3px 8px;font-size:11px;font-weight:600;font-family:inherit;-webkit-tap-highlight-color:transparent"><option value=""'+(!ex.equip?' selected':'')+'>＋ Equipment</option>'+EQUIP.map(function(eq){return '<option'+(ex.equip===eq?' selected':'')+'>'+eq+'</option>';}).join('')+'</select>';
 
     return '<div style="background:var(--input);border-radius:10px;padding:12px;margin-bottom:10px;border:1px solid var(--border)'+(ssOn?';border-left:3px solid '+ssColor:'')+'">'
       +'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">'
-      +'<div style="min-width:0">'+titleLine+badge+lastLine+'</div>'
+      +'<div style="min-width:0">'+titleLine+badge+'<div>'+equipSel+'</div>'+lastLine+'</div>'
       +'<button onclick="openExMenu('+ei+')" aria-label="Exercise menu" style="background:none;border:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:0 6px;border-radius:6px;-webkit-tap-highlight-color:transparent;flex-shrink:0;margin-left:8px">⋯</button>'
       +'</div>'
       +setRows
@@ -1749,6 +1751,14 @@ function unlinkSuperset(ei){
   saveAW();renderWkEx();
 }
 
+function setExEquip(ei,val){
+  if(!AW||!AW.exercises[ei])return;
+  var ex=AW.exercises[ei];ex.equip=val;
+  // Re-pull this variant's history only if nothing has been logged yet
+  var started=(ex.sets||[]).some(function(s){return s.done;});
+  if(!started)ex.sets=defaultSetsFor(ex.name,val);
+  saveAW();renderWkEx();
+}
 function updateSet(ei,si,field,val){
   if(!AW||!AW.exercises[ei])return;
   AW.exercises[ei].sets[si][field]=field==='w'?parseFloat(val)||0:parseInt(val)||0;
@@ -1859,22 +1869,28 @@ function wkEm(t){return{Gym:'🏋️',Run:'🏃',Badminton:'🏸',Other:'⚡'}[t
 function fmtSets(sets){
   return (sets||[]).filter(function(s){return (s.w||s.r)}).map(function(s){return (s.w||0)+'×'+(s.r||0)}).join(', ');
 }
-function lastPerf(name){
+function lastPerf(name,equip){
   var w=gw();
-  for(var i=0;i<w.length;i++){
-    var exs=w[i].exercises||[];
-    for(var j=0;j<exs.length;j++){
-      if(exs[j].name===name&&(exs[j].type||'normal')!=='superset'){
-        var txt=fmtSets(exs[j].sets);
-        if(txt)return {dateD:(w[i].dateD||w[i].date||''),txt:txt,sets:exs[j].sets||[]};
+  function scan(matchEquip){
+    for(var i=0;i<w.length;i++){
+      var exs=w[i].exercises||[];
+      for(var j=0;j<exs.length;j++){
+        if(exs[j].name===name&&(exs[j].type||'normal')!=='superset'){
+          if(matchEquip&&(exs[j].equip||'')!==(equip||''))continue;
+          var txt=fmtSets(exs[j].sets);
+          if(txt)return {dateD:(w[i].dateD||w[i].date||''),txt:txt,sets:exs[j].sets||[]};
+        }
       }
     }
+    return null;
   }
-  return null;
+  // Prefer same-equipment history; fall back to any (covers older untagged logs).
+  if(equip){var ex=scan(true);if(ex)return ex;}
+  return scan(false);
 }
 // Sets to seed a freshly-added exercise: autofill from last time, else 3 empty sets.
-function defaultSetsFor(name){
-  var prev=lastPerf(name);
+function defaultSetsFor(name,equip){
+  var prev=lastPerf(name,equip);
   if(prev&&prev.sets&&prev.sets.length){
     return prev.sets.map(function(s){return {w:(s.w||0),r:(s.r||0),type:(s.type||'normal')};});
   }
@@ -1895,7 +1911,7 @@ function openWkDetail(i){
       return '<div style="margin-bottom:14px"><div style="font-size:14px;font-weight:700">'+esc(ex.name)+' + '+esc(ex.name2||'')+'</div>'+r+'</div>';
     }
     var chips=(ex.sets||[]).map(function(s){return '<span style="display:inline-block;background:var(--input);border:1px solid var(--border);border-radius:8px;padding:3px 9px;margin:4px 5px 0 0;font-size:13px">'+(s.w||0)+'<span style="color:var(--muted)">kg</span> × '+(s.r||0)+'</span>'}).join('');
-    return '<div style="margin-bottom:14px"><div style="font-size:14px;font-weight:700;margin-bottom:2px">'+esc(ex.name)+'</div><div>'+(chips||'<span style="font-size:12px;color:var(--muted)">No sets logged</span>')+'</div></div>';
+    return '<div style="margin-bottom:14px"><div style="font-size:14px;font-weight:700;margin-bottom:2px">'+esc(ex.name)+(ex.equip?' <span style="color:var(--muted);font-weight:600;font-size:12px">· '+esc(ex.equip)+'</span>':'')+'</div><div>'+(chips||'<span style="font-size:12px;color:var(--muted)">No sets logged</span>')+'</div></div>';
   }).join(''):'<p style="color:var(--muted);font-size:13px">No exercises were logged for this session.</p>';
   document.getElementById('wkd-body').innerHTML=html;
   openModal('wk-detail-modal');
