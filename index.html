@@ -157,6 +157,10 @@ input.sinp:focus{border-color:var(--accent)}
 .tgl.on{background:var(--accent);border-color:var(--accent)}
 .tgl.on::after{transform:translateX(19px);background:var(--on-accent)}
 
+/* SERVE STEPPER */
+.srv-step{width:44px;height:44px;border-radius:10px;border:1px solid var(--border);background:var(--input);color:var(--txt);font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.srv-step:active{transform:scale(.94)}
+
 /* FOOD RESULTS */
 .fr-item{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .fr-item:last-child{border-bottom:none}
@@ -1218,29 +1222,94 @@ function searchFood(){
   if(!q)return;
   document.getElementById('food-spin').style.display='block';
   document.getElementById('food-res').innerHTML='';
-  fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&json=1&page_size=8&fields=product_name,brands,nutriments')
+  fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&json=1&page_size=8&fields=product_name,brands,nutriments,serving_quantity,serving_size')
     .then(function(r){return r.json()})
     .then(function(d){
       document.getElementById('food-spin').style.display='none';
       SR=(d.products||[]).filter(function(p){return p.product_name&&p.nutriments});
-      if(!SR.length){document.getElementById('food-res').innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px">No results.</p>';return}
-      document.getElementById('food-res').innerHTML=SR.map(function(p,i){
-        var n=p.nutriments,k=Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),pr=r1(n.proteins_100g||0),ca=r1(n.carbohydrates_100g||0),ft=r1(n.fat_100g||0);
-        return '<div class="fr-item" onclick="pickFood('+i+')">'
-          +'<div class="fr-name">'+esc(p.product_name)+'</div>'
-          +(p.brands?'<div class="fr-brand">'+esc(p.brands)+'</div>':'')
-          +'<div class="fr-macro">'+k+' kcal · P'+pr+'g · C'+ca+'g · F'+ft+'g (per 100g)</div></div>';
-      }).join('');
+      renderSearchResults();
     })
     .catch(function(){
       document.getElementById('food-spin').style.display='none';
-      document.getElementById('food-res').innerHTML='<p style="color:var(--red);font-size:13px;text-align:center;padding:16px">Search failed.</p>';
+      document.getElementById('food-res').innerHTML='<p style="color:var(--red);font-size:13px;text-align:center;padding:16px">Search failed — check your connection and try again.</p>';
     });
 }
-function pickFood(i){
-  var p=SR[i],n=p.nutriments,mt=document.getElementById('m-type-s').value;
+function renderSearchResults(){
+  if(!SR||!SR.length){document.getElementById('food-res').innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px">No results.</p>';return}
+  document.getElementById('food-res').innerHTML=SR.map(function(p,i){
+    var n=p.nutriments,k=Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),pr=r1(n.proteins_100g||0),ca=r1(n.carbohydrates_100g||0),ft=r1(n.fat_100g||0);
+    return '<div class="fr-item" onclick="pickSearchFood('+i+')">'
+      +'<div class="fr-name">'+esc(p.product_name)+'</div>'
+      +(p.brands?'<div class="fr-brand">'+esc(p.brands)+'</div>':'')
+      +'<div class="fr-macro">'+k+' kcal · P'+pr+'g · C'+ca+'g · F'+ft+'g (per 100g)</div></div>';
+  }).join('');
+}
+function serveGrams(p){
+  var g=parseFloat(p.serving_quantity);
+  if(!g||isNaN(g)){var ss=(p.serving_size||'').match(/([\d.]+)\s*g/i);if(ss)g=parseFloat(ss[1]);}
+  return (g&&g>0)?g:0; // 0 = no serving size on the product
+}
+function pickSearchFood(i){
+  var p=SR[i],n=p.nutriments;
   var k=Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),pr=r1(n.proteins_100g||0),ca=r1(n.carbohydrates_100g||0),ft=r1(n.fat_100g||0),fi=r1(n.fiber_100g||n['fiber-total_100g']||0);
-  addEntry(p.product_name,mt,'🔍',k,pr,ca,ft,100,fi);
+  var g=serveGrams(p),known=g>0;if(!known)g=100;
+  var hint=known?('1 serve = '+(+g.toFixed(0))+'g, from the product label'):'No serving size on this product — 1 serve is set to 100g. Adjust below if you know it.';
+  window._srch={k:k,pr:pr,ca:ca,ft:ft,fi:fi};
+  document.getElementById('food-res').innerHTML=
+    '<div style="background:var(--input);border-radius:10px;padding:14px;border:1px solid var(--border)">'
+    +'<button onclick="renderSearchResults()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 0 10px;-webkit-tap-highlight-color:transparent">‹ Back to results</button>'
+    +'<div style="font-size:15px;font-weight:700;margin-bottom:2px">'+esc(p.product_name)+'</div>'
+    +(p.brands?'<div style="font-size:12px;color:var(--muted);margin-bottom:8px">'+esc(p.brands)+'</div>':'')
+    +'<div style="font-size:11px;color:var(--muted);margin-bottom:14px">'+k+' kcal · P'+pr+' C'+ca+' F'+ft+' Fi'+fi+' per 100g</div>'
+    +'<label class="lbl">How many serves?</label>'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+    +'<button class="srv-step" onclick="bumpServe(-0.5)" aria-label="Less">−</button>'
+    +'<input type="number" id="srch-serves" class="inp" value="1" step="0.5" min="0" inputmode="decimal" style="text-align:center;font-size:18px;font-weight:700;flex:1">'
+    +'<button class="srv-step" onclick="bumpServe(0.5)" aria-label="More">+</button>'
+    +'</div>'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
+    +'<span style="font-size:12px;color:var(--muted)">1 serve =</span>'
+    +'<input type="number" id="srch-gps" class="inp" value="'+(+g.toFixed(0))+'" inputmode="decimal" style="width:84px;padding:7px 10px;font-size:14px">'
+    +'<span style="font-size:12px;color:var(--muted)">g (optional)</span>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center;background:var(--card);border-radius:10px;padding:10px 6px;margin-bottom:10px">'
+    +'<div><div id="srch-k" style="font-size:18px;font-weight:700;color:var(--accent)">0</div><div style="font-size:9px;color:var(--muted)">kcal</div></div>'
+    +'<div><div id="srch-p" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">P (g)</div></div>'
+    +'<div><div id="srch-c" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">C (g)</div></div>'
+    +'<div><div id="srch-f" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">F (g)</div></div>'
+    +'<div><div id="srch-fi" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">Fibre</div></div>'
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--muted);margin-bottom:12px">'+hint+'</div>'
+    +'<button class="btn btn-p btn-w" onclick="addSearchServe('+i+')">Add Food</button>'
+    +'</div>';
+  window._srchRecalc=function(){
+    var serves=parseFloat(document.getElementById('srch-serves').value)||0;
+    var gps=parseFloat(document.getElementById('srch-gps').value)||0;
+    var factor=serves*gps/100,s=window._srch;
+    document.getElementById('srch-k').textContent=Math.round(s.k*factor);
+    document.getElementById('srch-p').textContent=r1(s.pr*factor);
+    document.getElementById('srch-c').textContent=r1(s.ca*factor);
+    document.getElementById('srch-f').textContent=r1(s.ft*factor);
+    document.getElementById('srch-fi').textContent=r1(s.fi*factor);
+  };
+  document.getElementById('srch-serves').addEventListener('input',window._srchRecalc);
+  document.getElementById('srch-gps').addEventListener('input',window._srchRecalc);
+  window._srchRecalc(); // show one-serve values immediately
+}
+function bumpServe(d){
+  var el=document.getElementById('srch-serves');if(!el)return;
+  var v=(parseFloat(el.value)||0)+d;if(v<0)v=0;
+  el.value=Math.round(v*100)/100;
+  if(window._srchRecalc)window._srchRecalc();
+}
+function addSearchServe(i){
+  var p=SR[i],mt=document.getElementById('m-type-s').value;
+  var serves=parseFloat(document.getElementById('srch-serves').value)||0;
+  var gps=parseFloat(document.getElementById('srch-gps').value)||0;
+  if(serves<=0){toast('Enter how many serves');return}
+  var factor=serves*gps/100,s=window._srch;
+  var label=(serves===1?'1 serve':r1(serves)+' serves');
+  addEntry(p.product_name,mt,'🔍',Math.round(s.k*factor),r1(s.pr*factor),r1(s.ca*factor),r1(s.ft*factor),label,r1(s.fi*factor));
   closeModal('meal-modal');
 }
 
