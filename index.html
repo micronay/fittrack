@@ -130,6 +130,33 @@ input.sinp:focus{border-color:var(--accent)}
 .pt{padding:6px 14px;border-radius:99px;font-size:13px;font-weight:500;cursor:pointer;background:var(--input);color:var(--muted);border:1px solid var(--border);-webkit-tap-highlight-color:transparent}
 .pt.on{background:var(--accent);color:#0c0e00;border-color:transparent}
 
+/* DATE NAVIGATOR (meals) */
+.date-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px;margin-bottom:12px}
+.dn-arrow{width:38px;height:38px;border-radius:10px;background:var(--input);border:1px solid var(--border);color:var(--txt);font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.dn-arrow:active{transform:scale(.94)}
+.dn-arrow:disabled{opacity:.25;pointer-events:none}
+.dn-label-wrap{position:relative;flex:1;text-align:center;min-width:0}
+.dn-label{font-size:15px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dn-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.dn-date-input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:none;background:none;font-size:16px}
+
+/* EXPORT CHECKBOXES */
+.exrow{display:flex;align-items:center;gap:11px;padding:11px 2px;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.exrow:last-child{border-bottom:none}
+.exbox{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border);background:var(--input);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--on-accent);transition:background .12s,border-color .12s}
+.exrow.on .exbox{background:var(--accent);border-color:var(--accent)}
+.exrow .exbox::after{content:'✓';opacity:0}
+.exrow.on .exbox::after{opacity:1}
+.exrow-txt{flex:1;min-width:0}
+.exrow-name{font-size:14px;font-weight:600}
+.exrow-meta{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* TOGGLE SWITCH */
+.tgl{width:46px;height:27px;border-radius:99px;background:var(--input);border:1px solid var(--border);position:relative;cursor:pointer;flex-shrink:0;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.tgl::after{content:'';position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
+.tgl.on{background:var(--accent);border-color:var(--accent)}
+.tgl.on::after{transform:translateX(19px);background:var(--on-accent)}
+
 /* FOOD RESULTS */
 .fr-item{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .fr-item:last-child{border-bottom:none}
@@ -368,6 +395,16 @@ input.sinp:focus{border-color:var(--accent)}
           </button>
           <label class="avatar" for="t5" title="Settings">A</label>
         </div>
+      </div>
+
+      <!-- DATE NAVIGATOR -->
+      <div class="date-nav">
+        <button class="dn-arrow" onclick="shiftMealDate(-1)" aria-label="Previous day">‹</button>
+        <div class="dn-label-wrap">
+          <div class="dn-label" id="meal-date-label">Today</div>
+          <input type="date" id="meal-date-picker" class="dn-date-input" onchange="setMealDate(this.value)" aria-label="Pick a date">
+        </div>
+        <button class="dn-arrow" id="dn-next" onclick="shiftMealDate(1)" aria-label="Next day">›</button>
       </div>
 
       <!-- CALORIE BUDGET (MyFitnessPal-style) -->
@@ -691,7 +728,22 @@ input.sinp:focus{border-color:var(--accent)}
           <button class="btn btn-p" onclick="driveBackup()">☁️ Backup to Drive</button>
           <button class="btn btn-s" onclick="driveRestore()">⬇️ Restore from Drive</button>
         </div>
+        <div class="srow" style="margin-top:6px;border-bottom:none">
+          <div>
+            <div class="srow-lbl">Auto-backup</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;max-width:230px">Backs up when you open the app around 11am &amp; 10pm.</div>
+          </div>
+          <div class="tgl" id="autobackup-tgl" onclick="toggleAutoBackup()"></div>
+        </div>
         <div id="sync-status" style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;min-height:18px"></div>
+      </div>
+
+      <div style="margin-bottom:28px">
+        <div class="stitle">Export Data</div>
+        <div class="card" style="padding:14px 16px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Download your data to keep, move, or analyse in a spreadsheet. Choose what to include.</div>
+          <button class="btn btn-p btn-w" onclick="openExportModal()">⬇️ Choose data &amp; export</button>
+        </div>
       </div>
     </div>
 
@@ -962,6 +1014,28 @@ input.sinp:focus{border-color:var(--accent)}
   </div>
 </div>
 
+<!-- EXPORT MODAL -->
+<div class="mo" id="export-modal">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div class="mtitle">Export your data</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Pick what to include, then choose a format. Nothing leaves your phone until you save the file.</div>
+
+    <div class="card" style="padding:2px 14px;margin-bottom:16px" id="export-list"></div>
+
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="btn btn-s btn-sm" style="flex:1" onclick="exportSelectAll(true)">Select all</button>
+      <button class="btn btn-s btn-sm" style="flex:1" onclick="exportSelectAll(false)">Clear</button>
+    </div>
+
+    <button class="btn btn-p btn-w" style="margin-bottom:8px" onclick="doExportJSON()">⬇️ Export selected (JSON backup)</button>
+    <button class="btn btn-s btn-w" style="margin-bottom:8px" onclick="doExportGymCSV()">🏋️ Export gym lifting history (CSV)</button>
+    <button class="btn btn-s btn-w" style="margin-bottom:8px" onclick="doExportNutritionCSV()">🍽️ Export nutrition log (CSV)</button>
+    <div id="export-status" style="font-size:12px;color:var(--muted);text-align:center;margin:6px 0 2px;min-height:16px"></div>
+    <button class="btn btn-s btn-w" style="margin-top:6px" onclick="closeModal('export-modal')">Done</button>
+  </div>
+</div>
+
 <!-- EXERCISE MODAL -->
 <!-- GYM SPLIT MODAL -->
 <div class="mo" id="split-modal">
@@ -1060,8 +1134,10 @@ input.sinp:focus{border-color:var(--accent)}
 var DS={height:'',sex:'male',age:'',calGym:2200,calRun:2100,calBad:2000,calRst:1800,protein:150,carbs:200,fat:70,dt:'rst'};
 function gs(){try{return Object.assign({},DS,JSON.parse(localStorage.getItem('ft_s')||'{}'))}catch(e){return Object.assign({},DS)}}
 function td(){return new Date().toISOString().slice(0,10)}
-function gm(){try{return JSON.parse(localStorage.getItem('ft_m_'+td())||'[]')}catch(e){return[]}}
-function sm(m){localStorage.setItem('ft_m_'+td(),JSON.stringify(m))}
+var activeDate=td();
+function mealsForDate(d){try{return JSON.parse(localStorage.getItem('ft_m_'+d)||'[]')}catch(e){return[]}}
+function gm(){return mealsForDate(activeDate)}
+function sm(m){localStorage.setItem('ft_m_'+activeDate,JSON.stringify(m))}
 function gw(){try{return JSON.parse(localStorage.getItem('ft_w')||'[]')}catch(e){return[]}}
 function sw(w){localStorage.setItem('ft_w',JSON.stringify(w))}
 function gb(){try{return JSON.parse(localStorage.getItem('ft_b')||'[]')}catch(e){return[]}}
@@ -1290,25 +1366,52 @@ function lookupBarcode(code){
       }
       var p=d.product,n=p.nutriments||{};
       var nm=p.product_name||'Unknown product',br=p.brands||'';
+      // Per-100g values
       var k=Math.round(n['energy-kcal_100g']||n['energy-kcal']||0);
       var pr=r1(n.proteins_100g||0),ca=r1(n.carbohydrates_100g||0),ft=r1(n.fat_100g||0),fi=r1(n.fiber_100g||n['fiber-total_100g']||0);
+      // Work out one serving in grams: serving_quantity, else parse serving_size ("30 g"), else 100
+      var servG=parseFloat(p.serving_quantity);
+      if(!servG||isNaN(servG)){
+        var ss=(p.serving_size||'').match(/([\d.]+)\s*g/i);
+        if(ss)servG=parseFloat(ss[1]);
+      }
+      // If per-100g is missing but per-serving exists, derive per-100g from it
+      if(!k && n['energy-kcal_serving'] && servG){k=Math.round(n['energy-kcal_serving']*100/servG)}
+      if(!pr && n.proteins_serving && servG){pr=r1(n.proteins_serving*100/servG)}
+      if(!ca && n.carbohydrates_serving && servG){ca=r1(n.carbohydrates_serving*100/servG)}
+      if(!ft && n.fat_serving && servG){ft=r1(n.fat_serving*100/servG)}
+      if(!fi && (n.fiber_serving) && servG){fi=r1(n.fiber_serving*100/servG)}
+      var hasServ=!!(servG&&servG>0);
+      if(!hasServ)servG=100;
+      var servLabel=hasServ?('1 serving · '+(+servG.toFixed(0))+'g'+(p.serving_size&&!/^[\d.]+\s*g$/i.test(p.serving_size.trim())?' ('+esc(p.serving_size)+')':'')):'per 100g (no serving size on label)';
       document.getElementById('bc-status').textContent='✓ Found!';
       document.getElementById('bc-result').innerHTML=
         '<div style="background:var(--input);border-radius:10px;padding:14px;border:1px solid var(--border)">'
         +'<div style="font-size:15px;font-weight:700;margin-bottom:2px">'+esc(nm)+'</div>'
         +(br?'<div style="font-size:12px;color:var(--muted);margin-bottom:8px">'+esc(br)+'</div>':'')
-        +'<div style="font-size:13px;color:var(--accent);margin-bottom:12px">'+k+' kcal · P'+pr+'g · C'+ca+'g · F'+ft+'g · Fi'+fi+'g per 100g</div>'
-        +'<div class="fr" style="margin-bottom:10px">'
-        +'<div><label class="lbl">Serving (g)</label><input type="number" id="bc-sv" class="inp" value="100" inputmode="decimal"></div>'
-        +'<div><label class="lbl">Calories</label><div style="font-size:20px;font-weight:700;color:var(--accent);padding-top:10px" id="bc-cp">'+k+'</div></div>'
+        +'<div style="font-size:11px;color:var(--muted);margin-bottom:10px">'+k+' kcal · P'+pr+' C'+ca+' F'+ft+' Fi'+fi+' per 100g</div>'
+        +'<div class="fg" style="margin-bottom:10px"><label class="lbl">Serving size (g) — '+servLabel+'</label><input type="number" id="bc-sv" class="inp" value="'+(+servG.toFixed(0))+'" inputmode="decimal"></div>'
+        +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center;background:var(--card);border-radius:10px;padding:10px 6px;margin-bottom:12px">'
+        +'<div><div id="bc-cp" style="font-size:18px;font-weight:700;color:var(--accent)">0</div><div style="font-size:9px;color:var(--muted)">kcal</div></div>'
+        +'<div><div id="bc-pp" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">P (g)</div></div>'
+        +'<div><div id="bc-cc" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">C (g)</div></div>'
+        +'<div><div id="bc-ff" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">F (g)</div></div>'
+        +'<div><div id="bc-fp" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">Fibre</div></div>'
         +'</div>'
-        +'<button class="btn btn-p btn-w" onclick="addBarcodeFood(\''+esc(nm)+'\','+k+','+pr+','+ca+','+ft+','+fi+')">Add Food</button>'
+        +'<button class="btn btn-p btn-w" onclick="addBarcodeFood(\''+esc(nm).replace(/'/g,"\\'")+'\','+k+','+pr+','+ca+','+ft+','+fi+')">Add Food</button>'
         +'</div>';
-      document.getElementById('bc-sv').addEventListener('input',function(){
-        document.getElementById('bc-cp').textContent=Math.round(k*(parseFloat(this.value)||100)/100);
-      });
+      function recalc(){
+        var sv=parseFloat(document.getElementById('bc-sv').value)||servG;
+        document.getElementById('bc-cp').textContent=Math.round(k*sv/100);
+        document.getElementById('bc-pp').textContent=r1(pr*sv/100);
+        document.getElementById('bc-cc').textContent=r1(ca*sv/100);
+        document.getElementById('bc-ff').textContent=r1(ft*sv/100);
+        document.getElementById('bc-fp').textContent=r1(fi*sv/100);
+      }
+      document.getElementById('bc-sv').addEventListener('input',recalc);
+      recalc(); // auto-populate one-serve values immediately
     })
-    .catch(function(){document.getElementById('bc-result').innerHTML='<p style="color:var(--red);font-size:13px;text-align:center;padding:12px">Network error.</p>'});
+    .catch(function(){document.getElementById('bc-result').innerHTML='<p style="color:var(--red);font-size:13px;text-align:center;padding:12px">Network error — check your connection and try again.</p>'});
 }
 
 function addBarcodeFood(nm,k100,p100,c100,f100,fi100){
@@ -1372,7 +1475,7 @@ function renderMeals(){
   var m=gm(),s=gs(),tot={k:0,p:0,c:0,f:0,fi:0};
   m.forEach(function(x){tot.k+=x.cals;tot.p+=x.prot;tot.c+=x.carb;tot.f+=x.fat;tot.fi+=(x.fibre||0)});
   var goal=calGoal(s);
-  var today=td();
+  var today=activeDate;
   var exCal=gw().filter(function(w){return w.date===today}).reduce(function(a,w){return a+Math.round((BURN_RATES[w.type]||300)*(w.dur||0)/3600)},0);
   var rem=goal-tot.k+exCal;
   set('mc-goal',goal.toLocaleString());set('mc-food',Math.round(tot.k).toLocaleString());set('mc-ex',exCal.toLocaleString());
@@ -1401,6 +1504,49 @@ function openMealAdd(sec){
   ['m-type-s','m-type-b','m-type-m','m-type-q','m-type-l'].forEach(function(id){var e=document.getElementById(id);if(e&&sec)e.value=sec;});
   openModal('meal-modal');
 }
+
+// ── MEAL DATE NAVIGATOR ───────────────────────────────────────
+function fmtMealDate(dateStr){
+  var t=td();
+  var yd=new Date();yd.setDate(yd.getDate()-1);var yest=yd.toISOString().slice(0,10);
+  if(dateStr===t)return 'Today';
+  if(dateStr===yest)return 'Yesterday';
+  return new Date(dateStr+'T12:00:00').toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+}
+function renderMealDateNav(){
+  var lbl=document.getElementById('meal-date-label');
+  if(lbl)lbl.textContent=fmtMealDate(activeDate);
+  var picker=document.getElementById('meal-date-picker');
+  if(picker){picker.value=activeDate;picker.max=td();}
+  var nextBtn=document.getElementById('dn-next');
+  if(nextBtn)nextBtn.disabled=(activeDate>=td());
+}
+function setMealDate(dateStr){
+  if(!dateStr)return;
+  if(dateStr>td())dateStr=td();
+  activeDate=dateStr;
+  renderMealDateNav();renderMeals();
+}
+function shiftMealDate(delta){
+  var d=new Date(activeDate+'T12:00:00');
+  d.setDate(d.getDate()+delta);
+  var ns=d.toISOString().slice(0,10);
+  if(ns>td())return;
+  setMealDate(ns);
+}
+// Roll over to the new day automatically if the app is left open past midnight
+function checkDayRollover(){
+  var realToday=td();
+  if(window._ftDay && window._ftDay!==realToday){
+    if(activeDate===window._ftDay)activeDate=realToday; // follow "Today" forward
+    setScreenDates();
+    renderMealDateNav();renderMeals();updateHome();
+    try{renderWkHist();renderBody();}catch(e){}
+  }
+  window._ftDay=realToday;
+}
+document.addEventListener('visibilitychange',function(){if(!document.hidden){checkDayRollover();maybeAutoBackup();}});
+setInterval(checkDayRollover,30000);
 
 // ── EXERCISE LIBRARY ──────────────────────────────────────────
 var EX_LIB={
@@ -2247,7 +2393,7 @@ function clearAll(){
 // ── HOME / STATS ──────────────────────────────────────────────
 function calGoal(s){return{gym:s.calGym||2200,run:s.calRun||2100,bad:s.calBad||2000,rst:s.calRst||1800}[s.dt||'rst']}
 function updateHome(){
-  var s=gs(),m=gm(),tot={k:0,p:0,c:0,f:0,fi:0};
+  var s=gs(),m=mealsForDate(td()),tot={k:0,p:0,c:0,f:0,fi:0};
   m.forEach(function(x){tot.k+=x.cals;tot.p+=x.prot;tot.c+=x.carb;tot.f+=x.fat;tot.fi+=(x.fibre||0)});
   var goal=calGoal(s),rem=goal-tot.k;
   set('h-cal',tot.k);set('h-goal',goal);
@@ -2326,23 +2472,50 @@ function getAllData(){
   return data;
 }
 
-function driveBackup(){
+function driveBackup(auto,cb){
   var url=getDriveURL(),tok=getDriveToken();
-  if(!url){toast('Paste your Apps Script URL in Settings first');return}
-  if(!tok){toast('Enter your secret token in Settings first');return}
+  if(!url){if(!auto)toast('Paste your Apps Script URL in Settings first');if(cb)cb(false);return}
+  if(!tok){if(!auto)toast('Enter your secret token in Settings first');if(cb)cb(false);return}
   localStorage.setItem('ft_gsurl',url);localStorage.setItem('ft_gstoken',tok);
-  syncStatus('Backing up…','var(--yellow)');
+  syncStatus(auto?'Auto-backup…':'Backing up…','var(--yellow)');
   var payload=getAllData();
   fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'backup',token:tok,data:payload})})
     .then(function(r){return r.json()})
     .then(function(d){
       if(d.status==='ok'){
         var mealCount=Object.keys(payload).filter(function(k){return k.startsWith('ft_m_')}).length;
-        syncStatus('✓ Backed up at '+new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})+' ('+mealCount+' meal days)','var(--accent)');
-        toast('☁️ Backup complete');
-      } else {syncStatus('Failed: '+(d.error||'unknown'),'var(--red)');toast('Backup failed')}
+        var t=new Date().toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+        syncStatus((auto?'✓ Auto-backed up ':'✓ Backed up ')+t+' ('+mealCount+' meal days)','var(--accent)');
+        if(!auto)toast('☁️ Backup complete');
+        if(cb)cb(true);
+      } else {syncStatus('Failed: '+(d.error||'unknown'),'var(--red)');if(!auto)toast('Backup failed');if(cb)cb(false)}
     })
-    .catch(function(){syncStatus('Network error — check URL','var(--red)');toast('Backup failed')});
+    .catch(function(){syncStatus('Network error — check URL','var(--red)');if(!auto)toast('Backup failed');if(cb)cb(false)});
+}
+
+// ── AUTO-BACKUP (opportunistic, slots at 11:00 & 22:00) ───────
+var BACKUP_SLOTS=[{id:'slot11',hour:11},{id:'slot22',hour:22}];
+function isBackupConfigured(){return !!(localStorage.getItem('ft_gsurl')&&localStorage.getItem('ft_gstoken'))}
+function autoBackupEnabled(){return localStorage.getItem('ft_autobackup_on')!=='0'} // default on
+function getAutoBackupState(){try{return JSON.parse(localStorage.getItem('ft_autobackup')||'{}')}catch(e){return{}}}
+function setAutoBackupState(s){localStorage.setItem('ft_autobackup',JSON.stringify(s))}
+function maybeAutoBackup(){
+  if(!autoBackupEnabled()||!isBackupConfigured())return;
+  var today=td(),hr=new Date().getHours(),st=getAutoBackupState();
+  var due=BACKUP_SLOTS.filter(function(s){return hr>=s.hour&&st[s.id]!==today});
+  if(!due.length)return;
+  driveBackup(true,function(ok){
+    if(ok){due.forEach(function(s){st[s.id]=today});setAutoBackupState(st)}
+  });
+}
+function updateAutoBackupUI(){
+  var el=document.getElementById('autobackup-tgl');
+  if(el)el.className='tgl'+(autoBackupEnabled()?' on':'');
+}
+function toggleAutoBackup(){
+  localStorage.setItem('ft_autobackup_on',autoBackupEnabled()?'0':'1');
+  updateAutoBackupUI();
+  if(autoBackupEnabled())maybeAutoBackup();
 }
 
 function driveRestore(){
@@ -2384,6 +2557,115 @@ function driveRestore(){
     .catch(function(){syncStatus('Network error — check URL and token','var(--red)');toast('Restore failed')});
 }
 
+// ── DATA EXPORT ───────────────────────────────────────────────
+var EXPORT_CATS=[
+  {id:'meals',name:'Nutrition / meal logs',match:function(k){return k.indexOf('ft_m_')===0}},
+  {id:'workouts',name:'Workouts & lifting history',keys:['ft_w','ft_pb']},
+  {id:'body',name:'Body measurements & weight',keys:['ft_b']},
+  {id:'water',name:'Water tracking',keys:['ft_water']},
+  {id:'library',name:'Food library',keys:['ft_lib']},
+  {id:'plans',name:'Meal plans & prep',keys:['ft_plans','ft_prep']},
+  {id:'settings',name:'Settings & targets',keys:['ft_s']}
+];
+var EXPORT_SEL={};
+function exportCatKeys(cat){
+  return Object.keys(localStorage).filter(function(k){
+    if(cat.match)return cat.match(k);
+    return cat.keys.indexOf(k)>=0;
+  });
+}
+function exportCatMeta(cat){
+  var ks=exportCatKeys(cat);
+  if(cat.id==='meals')return ks.length?ks.length+' day'+(ks.length===1?'':'s')+' logged':'Nothing logged yet';
+  if(cat.id==='workouts'){var w=gw();return w.length?w.length+' workout'+(w.length===1?'':'s'):'No workouts yet'}
+  if(cat.id==='body'){var b=gb();return b.length?b.length+' entr'+(b.length===1?'y':'ies'):'No entries yet'}
+  return ks.length?'Included':'Empty';
+}
+function renderExportList(){
+  document.getElementById('export-list').innerHTML=EXPORT_CATS.map(function(c){
+    if(!(c.id in EXPORT_SEL))EXPORT_SEL[c.id]=true;
+    var on=EXPORT_SEL[c.id];
+    return '<div class="exrow '+(on?'on':'')+'" onclick="toggleExportCat(\''+c.id+'\')">'
+      +'<div class="exbox"></div>'
+      +'<div class="exrow-txt"><div class="exrow-name">'+c.name+'</div><div class="exrow-meta">'+exportCatMeta(c)+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+function toggleExportCat(id){EXPORT_SEL[id]=!EXPORT_SEL[id];renderExportList()}
+function exportSelectAll(v){EXPORT_CATS.forEach(function(c){EXPORT_SEL[c.id]=v});renderExportList()}
+function openExportModal(){renderExportList();document.getElementById('export-status').textContent='';openModal('export-modal')}
+
+function ftDownload(filename,content,mime){
+  try{
+    var blob=new Blob([content],{type:mime});
+    if(navigator.canShare){
+      try{
+        var file=new File([blob],filename,{type:mime});
+        if(navigator.canShare({files:[file]})){navigator.share({files:[file],title:filename}).catch(function(){});return true}
+      }catch(e){}
+    }
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url)},1500);
+    return true;
+  }catch(e){return false}
+}
+function toCSV(rows){
+  return rows.map(function(r){return r.map(function(c){
+    c=(c==null?'':String(c));
+    return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;
+  }).join(',')}).join('\r\n');
+}
+function doExportJSON(){
+  var data={},any=false;
+  EXPORT_CATS.forEach(function(c){
+    if(!EXPORT_SEL[c.id])return;
+    exportCatKeys(c).forEach(function(k){
+      any=true;
+      try{data[k]=JSON.parse(localStorage.getItem(k))}catch(e){data[k]=localStorage.getItem(k)}
+    });
+  });
+  if(!any){document.getElementById('export-status').textContent='Select at least one category first.';return}
+  var payload={app:'FitTrack',exported:new Date().toISOString(),data:data};
+  var ok=ftDownload('fittrack-export-'+td()+'.json',JSON.stringify(payload,null,2),'application/json');
+  document.getElementById('export-status').textContent=ok?'✓ JSON ready — save it from the menu.':'Could not create the file on this browser.';
+}
+function doExportGymCSV(){
+  var wk=gw().slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'')});
+  if(!wk.length){document.getElementById('export-status').textContent='No workouts logged yet.';return}
+  var rows=[['Date','Session','Exercise','Equipment','Set','Set type','Weight (kg)','Reps','Volume (kg)']];
+  wk.forEach(function(w){
+    var date=w.date||'',sess=(w.type||'')+(w.split?(' / '+w.split):'');
+    (w.exercises||[]).forEach(function(ex){
+      if(ex.type==='superset'){
+        (ex.sets||[]).forEach(function(s,i){
+          rows.push([date,sess,ex.name,ex.equip||'',i+1,'superset A',s.wa||0,s.ra||0,(s.wa||0)*(s.ra||0)]);
+          rows.push([date,sess,ex.name2||'',ex.equip||'',i+1,'superset B',s.wb||0,s.rb||0,(s.wb||0)*(s.rb||0)]);
+        });
+      }else{
+        (ex.sets||[]).forEach(function(s,i){
+          rows.push([date,sess,ex.name,ex.equip||'',i+1,(s.type||'normal'),s.w||0,s.r||0,(s.w||0)*(s.r||0)]);
+        });
+      }
+    });
+  });
+  var ok=ftDownload('fittrack-gym-history-'+td()+'.csv',toCSV(rows),'text/csv');
+  document.getElementById('export-status').textContent=ok?'✓ Gym history CSV ready ('+(rows.length-1)+' sets).':'Could not create the file on this browser.';
+}
+function doExportNutritionCSV(){
+  var keys=Object.keys(localStorage).filter(function(k){return k.indexOf('ft_m_')===0}).sort();
+  if(!keys.length){document.getElementById('export-status').textContent='No meals logged yet.';return}
+  var rows=[['Date','Meal','Time','Food','Serving','Calories','Protein (g)','Carbs (g)','Fat (g)','Fibre (g)']];
+  keys.forEach(function(k){
+    var date=k.slice(5),m=[];
+    try{m=JSON.parse(localStorage.getItem(k)||'[]')}catch(e){}
+    m.forEach(function(x){rows.push([date,x.type||'',x.time||'',x.name||'',x.serv||'',x.cals||0,x.prot||0,x.carb||0,x.fat||0,x.fibre||0])});
+  });
+  var ok=ftDownload('fittrack-nutrition-'+td()+'.csv',toCSV(rows),'text/csv');
+  document.getElementById('export-status').textContent=ok?'✓ Nutrition CSV ready ('+(rows.length-1)+' rows).':'Could not create the file on this browser.';
+}
+
 // ── WATER TRACKER ─────────────────────────────────────────────
 function getWaterData(){try{return JSON.parse(localStorage.getItem('ft_water')||'{}')}catch(e){return{}}}
 function saveWaterData(d){localStorage.setItem('ft_water',JSON.stringify(d))}
@@ -2417,7 +2699,7 @@ function updateBurnUI(){
     var rate=BURN_RATES[w.type]||300;
     return a+Math.round(rate*(w.dur||0)/3600);
   },0);
-  var meals=gm(),consumed=meals.reduce(function(a,m){return a+m.cals},0);
+  var meals=mealsForDate(td()),consumed=meals.reduce(function(a,m){return a+m.cals},0);
   var net=consumed-wkBurn;
   set('h-burn-workout',wkBurn);set('h-burn-net',net);
   var netEl=document.getElementById('h-burn-net');
@@ -2903,9 +3185,10 @@ document.getElementById('t6').addEventListener('change',function(){setTimeout(re
 
 // ── INIT ──────────────────────────────────────────────────────
 function init(){
+  activeDate=td();window._ftDay=td();
   setScreenDates();
   var dateEl=document.getElementById('b-date');if(dateEl)dateEl.value=td();
-  loadSettings();updateGreeting();renderMeals();renderWkHist();renderBody();updateHome();
+  loadSettings();updateGreeting();renderMealDateNav();renderMeals();renderWkHist();renderBody();updateHome();
   renderLibExercises();
   exLibTab('chest',document.querySelector('#ex-lib-tabs .pt'));
   var saved=localStorage.getItem('ft_gsurl')||'';
@@ -2914,6 +3197,7 @@ function init(){
   var tokEl=document.getElementById('s-gstoken');if(tokEl)tokEl.value=savedTok;
   renderMealPlans();renderPrepList();
   restoreAW();
+  updateAutoBackupUI();maybeAutoBackup();
 }
 init();
 </script>
