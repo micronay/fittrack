@@ -15,7 +15,7 @@ html,body{height:100%;overflow:hidden}
 body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#000;color:#f4f6ee;display:flex;flex-direction:column;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
 :root{
   --bg:#000000;--card:#0d0e10;--input:#15161a;
-  --accent:#e8ff4d;--on-accent:#0c0e00;--blue:#ffffff;--red:#ff6b6b;--yellow:#ffffff;--purple:#ffffff;--green:#e8ff4d;
+  --accent:#e8ff4d;--on-accent:#0c0e00;--accent-soft:rgba(232,255,77,.15);--blue:#ffffff;--red:#ff6b6b;--yellow:#ffffff;--purple:#ffffff;--green:#e8ff4d;
   --txt:#f4f6ee;--muted:#878d82;--border:rgba(255,255,255,0.08);
   --hero-bd:rgba(232,255,77,.22);
   --r:20px;--tab-h:62px
@@ -86,7 +86,10 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#000;col
 .sb{background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)}
 .sb .sv{font-size:20px;font-weight:700}
 .sb .slb{font-size:11px;color:var(--muted);margin-top:2px}
-.sb .si{font-size:18px;margin-bottom:6px}
+.sb .si{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:7px}
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-0.14em;font-size:17px}
+.hico{color:var(--accent);font-size:13px;margin-right:6px;display:inline-flex;align-items:center;vertical-align:-1px}
+.hico .ic{font-size:inherit}
 
 /* MEAL ITEMS */
 .mi-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
@@ -101,7 +104,8 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:#000;col
 /* WORKOUT */
 .wi{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
 .wi:last-child{border-bottom:none}
-.wb{width:40px;height:40px;border-radius:10px;background:rgba(74,158,255,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.wb{width:40px;height:40px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wb .ic{font-size:20px}
 
 
 /* SETTINGS */
@@ -160,6 +164,28 @@ input.sinp:focus{border-color:var(--accent)}
 /* SERVE STEPPER */
 .srv-step{width:44px;height:44px;border-radius:10px;border:1px solid var(--border);background:var(--input);color:var(--txt);font-size:22px;line-height:1;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;font-family:inherit}
 .srv-step:active{transform:scale(.94)}
+.sr-head{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:4px 0 6px}
+
+/* SPLIT PICKER + EDITOR */
+.splitblk{display:flex;align-items:center;gap:12px;background:var(--input);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .12s,background .12s}
+.splitblk:active{transform:scale(.98)}
+.splitblk:hover{border-color:var(--accent)}
+.splitblk .dtico{width:38px;height:38px;border-radius:11px}
+.splitblk .dtico .ic{font-size:20px}
+.sb-name{font-size:15px;font-weight:700;color:var(--txt)}
+.sb-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.sb-last{font-size:11px;color:var(--accent);flex-shrink:0;text-align:right;font-weight:600}
+.sed-day{background:var(--input);border:1px solid var(--border);border-radius:14px;padding:12px 13px;margin-bottom:10px}
+.sed-hd{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.sed-hd .dtico{width:30px;height:30px}
+.sed-hd .sb-name{flex:1}
+.sed-ex{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.sed-ex:last-of-type{border-bottom:none}
+.sed-ex-nm{flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sed-mini{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--txt);font-size:14px;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;line-height:1}
+.sed-mini:active{transform:scale(.92)}
+.expick-chip{background:var(--input);border:1px solid var(--border);border-radius:20px;padding:6px 13px;font-size:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.expick-chip:active{background:var(--accent-soft);border-color:var(--accent)}
 
 /* FOOD RESULTS */
 .fr-item{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -170,7 +196,14 @@ input.sinp:focus{border-color:var(--accent)}
 .fr-macro{font-size:12px;color:var(--accent);margin-top:2px}
 
 /* DAY TYPE PILL */
-.dtp{display:inline-block;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;margin-bottom:12px}
+.dtp{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;margin-bottom:12px}
+.dtp-ic{display:inline-flex}.dtp-ic .ic{font-size:13px}
+.dtgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dtbtn{display:flex;align-items:center;gap:9px;background:var(--input);border:1px solid var(--border);border-radius:12px;padding:12px;color:var(--txt);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .12s,background .12s}
+.dtbtn:active{transform:scale(.97)}
+.dtico{width:30px;height:30px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .12s,color .12s}
+.dtbtn.on{border-color:var(--accent);background:var(--accent-soft)}
+.dtbtn.on .dtico{background:var(--accent);color:var(--on-accent)}
 .gym{background:rgba(232,255,77,.15);color:var(--accent)}
 .run{background:rgba(74,158,255,.15);color:var(--blue)}
 .bad{background:rgba(255,209,102,.15);color:var(--yellow)}
@@ -212,8 +245,25 @@ input.sinp:focus{border-color:var(--accent)}
 .act-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:16px}
 .act-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:15px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .1s,border-color .15s}
 .act-card:active{transform:scale(.97)}
-.act-ico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
-.act-ico svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.act-list{display:flex;flex-direction:column;gap:8px}
+.act-row{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 15px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .1s,border-color .15s}
+.act-row:active{transform:scale(.99)}
+.act-row .act-ico{margin-bottom:0}
+.act-txt{flex:1;min-width:0}
+.act-go{color:var(--muted);font-size:22px;flex-shrink:0;line-height:1}
+.act-chev{color:var(--muted);flex-shrink:0;display:inline-flex;transition:transform .2s}
+.act-item.open .act-chev{transform:rotate(180deg)}
+.act-expand{display:none;padding:8px 4px 2px}
+.act-item.open .act-expand{display:block}
+.split-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;background:var(--input);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.split-row:active{transform:scale(.98)}
+.split-row:hover{border-color:var(--accent)}
+.split-name{font-size:14px;font-weight:600;color:var(--txt)}
+.split-sub{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.split-last{font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:4px 10px;border-radius:99px;flex-shrink:0;white-space:nowrap}
+.split-editlink{text-align:center;font-size:12px;font-weight:600;color:var(--muted);padding:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.act-ico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;background:var(--accent-soft)}
+.act-ico svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .act-name{font-size:16px;font-weight:700}
 .act-sub{font-size:12px;color:var(--muted);margin-top:2px}
 
@@ -344,15 +394,15 @@ input.sinp:focus{border-color:var(--accent)}
       </div>
 
       <div class="sg" style="margin-bottom:12px;grid-template-columns:1fr 1fr 1fr">
-        <div class="sb"><div class="si">📏</div><div class="sv" style="color:var(--accent)" id="h-wt">—</div><div class="slb">Last weight (kg)</div></div>
-        <div class="sb"><div class="si">🔥</div><div class="sv" style="color:var(--yellow)" id="h-st">0</div><div class="slb">Day streak</div></div>
-        <div class="sb"><div class="si">⚖️</div><div class="sv" style="color:var(--blue)" id="h-bmi">—</div><div class="slb">BMI</div></div>
+        <div class="sb"><div class="si" data-ic="ruler"></div><div class="sv" style="color:var(--accent)" id="h-wt">—</div><div class="slb">Last weight (kg)</div></div>
+        <div class="sb"><div class="si" data-ic="flame"></div><div class="sv" style="color:var(--yellow)" id="h-st">0</div><div class="slb">Day streak</div></div>
+        <div class="sb"><div class="si" data-ic="scale"></div><div class="sv" style="color:var(--blue)" id="h-bmi">—</div><div class="slb">BMI</div></div>
       </div>
 
       <!-- WATER TRACKER -->
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div class="card-title" style="margin-bottom:0">💧 Water Intake</div>
+          <div class="card-title" style="margin-bottom:0"><i class="hico" data-ic="drop"></i>Water Intake</div>
           <span style="font-size:13px;font-weight:700;color:var(--blue)" id="h-water-val">0 ml</span>
         </div>
         <div class="pb"><div class="pf" id="h-water-bar" style="width:0%;background:var(--blue)"></div></div>
@@ -371,7 +421,7 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- CALORIE BURN FROM WORKOUTS -->
       <div class="card">
-        <div class="card-title">🔥 Calorie Burn Today</div>
+        <div class="card-title"><i class="hico" data-ic="flame"></i>Calorie Burn Today</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div style="text-align:center;background:var(--input);border-radius:10px;padding:12px;border:1px solid var(--border)">
             <div style="font-size:20px;font-weight:700;color:var(--yellow)" id="h-burn-workout">0</div>
@@ -474,23 +524,39 @@ input.sinp:focus{border-color:var(--accent)}
       <!-- START BUTTONS -->
       <div id="wk-start">
         <div class="sec-lbl">Start a session</div>
-        <div class="act-grid">
-          <div class="act-card" onclick="openModal('split-modal')">
-            <div class="act-ico" style="background:#3b82f6"><svg viewBox="0 0 24 24"><path d="M6 12h12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><path d="M6 7v10M18 7v10"/></svg></div>
-            <div class="act-name">Gym</div><div class="act-sub">Strength training</div>
+        <div class="act-list">
+          <div class="act-item">
+            <div class="act-row" id="gym-row" onclick="toggleGymSplit()">
+              <span class="act-ico"><svg viewBox="0 0 24 24"><path d="M6 12h12"/><rect x="2" y="9" width="3" height="6" rx="1"/><rect x="19" y="9" width="3" height="6" rx="1"/><path d="M6 7v10M18 7v10"/></svg></span>
+              <div class="act-txt"><div class="act-name">Gym</div><div class="act-sub">Strength training · tap to pick a day</div></div>
+              <span class="act-chev" id="gym-chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </div>
+            <div class="act-expand" id="gym-splits"></div>
           </div>
-          <div class="act-card" onclick="startWorkout('Run')">
-            <div class="act-ico" style="background:#ff7e5f"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-            <div class="act-name">Run</div><div class="act-sub">Outdoor · GPS</div>
+          <div class="act-row" onclick="startWorkout('Run')">
+            <span class="act-ico"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+            <div class="act-txt"><div class="act-name">Run</div><div class="act-sub">Outdoor · GPS</div></div>
+            <span class="act-go">›</span>
           </div>
-          <div class="act-card" onclick="startWorkout('Badminton')">
-            <div class="act-ico" style="background:#a78bfa"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.5 6c4 2.5 9 2.5 15 0M4.5 18c4-2.5 9-2.5 15 0"/></svg></div>
-            <div class="act-name">Badminton</div><div class="act-sub">Cardio · doubles</div>
+          <div class="act-row" onclick="startWorkout('Badminton')">
+            <span class="act-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M4.5 6c4 2.5 9 2.5 15 0M4.5 18c4-2.5 9-2.5 15 0"/></svg></span>
+            <div class="act-txt"><div class="act-name">Badminton</div><div class="act-sub">Cardio · doubles</div></div>
+            <span class="act-go">›</span>
           </div>
-          <div class="act-card" onclick="startWorkout('Other')">
-            <div class="act-ico" style="background:#2fe07a"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-            <div class="act-name">Other</div><div class="act-sub">Custom activity</div>
+          <div class="act-row" onclick="startWorkout('Other')">
+            <span class="act-ico"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+            <div class="act-txt"><div class="act-name">Other</div><div class="act-sub">Custom activity</div></div>
+            <span class="act-go">›</span>
           </div>
+        </div>
+
+        <!-- MY SPLIT -->
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="min-width:0">
+            <div style="font-size:14px;font-weight:700;color:var(--txt)">My 5-day split</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="split-summary">Chest · Back · Legs · Shoulders · Arms</div>
+          </div>
+          <button class="btn btn-s btn-sm" style="flex-shrink:0" onclick="openSplitEditor()">Edit</button>
         </div>
 
         <!-- EXERCISE LIBRARY BY BODY PART -->
@@ -538,7 +604,7 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- WEIGHT SUMMARY -->
       <div class="card">
-        <div class="card-hd"><div class="card-title">⚖️ Weight</div><span class="trend-badge" id="bd-trend">—</span></div>
+        <div class="card-hd"><div class="card-title"><i class="hico" data-ic="scale"></i>Weight</div><span class="trend-badge" id="bd-trend">—</span></div>
         <div style="display:flex;align-items:baseline;justify-content:space-between">
           <div><span style="font-size:38px;font-weight:800;line-height:1" id="bd-wt">—</span><span style="font-size:16px;color:var(--muted);font-weight:600"> kg</span></div>
           <div style="font-size:13px;color:var(--muted)">Goal <span id="bd-goal" style="color:var(--txt);font-weight:700">—</span></div>
@@ -556,7 +622,7 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- MEASUREMENTS -->
       <div class="card">
-        <div class="card-hd"><div class="card-title">📏 Measurements</div><span class="mg-kcal" id="bd-updated"></span></div>
+        <div class="card-hd"><div class="card-title"><i class="hico" data-ic="ruler"></i>Measurements</div><span class="mg-kcal" id="bd-updated"></span></div>
         <div id="meas-list"></div>
       </div>
 
@@ -623,7 +689,7 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- PROFILE -->
       <div style="margin-bottom:20px">
-        <div class="stitle">👤 Profile</div>
+        <div class="stitle"><i class="hico" data-ic="user"></i>Profile</div>
         <div class="card" style="padding:0 16px">
           <div class="srow"><div class="srow-lbl">Name</div><input type="text" id="s-name" class="sinp" placeholder="Your name" style="width:140px;text-align:right"></div>
           <div class="srow"><div class="srow-lbl">Height (cm)</div><input type="number" id="s-h" class="sinp" placeholder="175" inputmode="decimal"></div>
@@ -634,7 +700,7 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- CURRENT WEIGHT -->
       <div style="margin-bottom:20px">
-        <div class="stitle">⚖️ Current Weight</div>
+        <div class="stitle"><i class="hico" data-ic="scale"></i>Current Weight</div>
         <div class="card" style="padding:0 16px">
           <div class="srow"><div class="srow-lbl">Weight (kg)</div><input type="number" id="s-wt" class="sinp" placeholder="80.0" step="0.1" inputmode="decimal"></div>
           <div class="srow"><div class="srow-lbl">Target weight (kg)</div><input type="number" id="s-twt" class="sinp" placeholder="75.0" step="0.1" inputmode="decimal"></div>
@@ -644,35 +710,31 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- TODAY'S DAY TYPE -->
       <div style="margin-bottom:20px">
-        <div class="stitle">📅 Today's Day Type</div>
-        <div class="card" style="padding:0 16px">
-          <div class="srow">
-            <div class="srow-lbl">Day type</div>
-            <select id="s-dt" class="sel" style="width:150px;padding:6px 30px 6px 10px">
-              <option value="gym">🏋️ Gym</option>
-              <option value="run">🏃 Run</option>
-              <option value="bad">🏸 Badminton</option>
-              <option value="rst" selected>🛋️ Rest</option>
-            </select>
-          </div>
+        <div class="stitle"><i class="hico" data-ic="calendar"></i>Today's Day Type</div>
+        <div class="dtgrid" id="dt-grid">
+          <button class="dtbtn" data-dt="gym" onclick="setDayType('gym')"><span class="dtico" data-ic="dumbbell"></span>Gym</button>
+          <button class="dtbtn" data-dt="run" onclick="setDayType('run')"><span class="dtico" data-ic="run"></span>Run</button>
+          <button class="dtbtn" data-dt="bad" onclick="setDayType('bad')"><span class="dtico" data-ic="shuttle"></span>Badminton</button>
+          <button class="dtbtn" data-dt="rst" onclick="setDayType('rst')"><span class="dtico" data-ic="rest"></span>Rest</button>
         </div>
+        <input type="hidden" id="s-dt" value="rst">
       </div>
 
       <!-- CALORIE TARGETS -->
       <div style="margin-bottom:20px">
-        <div class="stitle">🔥 Calorie Targets by Day</div>
+        <div class="stitle"><i class="hico" data-ic="flame"></i>Calorie Targets by Day</div>
         <div class="card" style="padding:0 16px">
-          <div class="srow"><div class="srow-lbl">🏋️ Gym day</div><input type="number" id="s-gym" class="sinp" placeholder="2200" inputmode="numeric"></div>
-          <div class="srow"><div class="srow-lbl">🏃 Run day</div><input type="number" id="s-run" class="sinp" placeholder="2100" inputmode="numeric"></div>
-          <div class="srow"><div class="srow-lbl">🏸 Badminton day</div><input type="number" id="s-bad" class="sinp" placeholder="2000" inputmode="numeric"></div>
-          <div class="srow"><div class="srow-lbl">🛋️ Rest day</div><input type="number" id="s-rst" class="sinp" placeholder="1800" inputmode="numeric"></div>
+          <div class="srow"><div class="srow-lbl"><i class="hico" data-ic="dumbbell"></i>Gym day</div><input type="number" id="s-gym" class="sinp" placeholder="2200" inputmode="numeric"></div>
+          <div class="srow"><div class="srow-lbl"><i class="hico" data-ic="run"></i>Run day</div><input type="number" id="s-run" class="sinp" placeholder="2100" inputmode="numeric"></div>
+          <div class="srow"><div class="srow-lbl"><i class="hico" data-ic="shuttle"></i>Badminton day</div><input type="number" id="s-bad" class="sinp" placeholder="2000" inputmode="numeric"></div>
+          <div class="srow"><div class="srow-lbl"><i class="hico" data-ic="rest"></i>Rest day</div><input type="number" id="s-rst" class="sinp" placeholder="1800" inputmode="numeric"></div>
         </div>
         <button class="btn btn-s btn-sm" style="margin-top:8px;width:100%" onclick="calcTDEE()">⚡ Auto-calculate with TDEE</button>
       </div>
 
       <!-- MACRO TARGETS -->
       <div style="margin-bottom:20px">
-        <div class="stitle">🥗 Macro Targets (g/day)</div>
+        <div class="stitle"><i class="hico" data-ic="leaf"></i>Macro Targets (g/day)</div>
         <div class="card" style="padding:0 16px">
           <div class="srow">
             <div class="srow-lbl">🥩 Protein</div>
@@ -768,20 +830,20 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- WEEKLY SUMMARY CARD -->
       <div class="card" id="sum-weekly-card">
-        <div class="card-title">📊 Period Summary</div>
+        <div class="card-title"><i class="hico" data-ic="chart"></i>Period Summary</div>
         <div id="sum-weekly"></div>
       </div>
 
       <!-- WEIGHT CHART -->
       <div class="card">
-        <div class="card-title">⚖️ Weight Trend</div>
+        <div class="card-title"><i class="hico" data-ic="scale"></i>Weight Trend</div>
         <canvas id="chart-weight" height="140" style="width:100%"></canvas>
         <div id="chart-weight-empty" style="display:none" class="empty"><div class="ei">📉</div><p>Log weight to see trend</p></div>
       </div>
 
       <!-- MACRO DONUT -->
       <div class="card">
-        <div class="card-title">🥗 Average Macro Split</div>
+        <div class="card-title"><i class="hico" data-ic="leaf"></i>Average Macro Split</div>
         <div style="display:flex;align-items:center;gap:16px">
           <canvas id="chart-macro" width="110" height="110" style="flex-shrink:0"></canvas>
           <div id="chart-macro-legend" style="flex:1"></div>
@@ -791,21 +853,21 @@ input.sinp:focus{border-color:var(--accent)}
 
       <!-- CALORIE TREND -->
       <div class="card">
-        <div class="card-title">🔥 Calorie Trend</div>
+        <div class="card-title"><i class="hico" data-ic="flame"></i>Calorie Trend</div>
         <canvas id="chart-cals" height="140" style="width:100%"></canvas>
         <div id="chart-cals-empty" style="display:none" class="empty"><div class="ei">🔥</div><p>Log meals to see trend</p></div>
       </div>
 
       <!-- WORKOUT VOLUME -->
       <div class="card">
-        <div class="card-title">💪 Workout Volume (kg lifted)</div>
+        <div class="card-title"><i class="hico" data-ic="dumbbell"></i>Workout Volume (kg lifted)</div>
         <canvas id="chart-volume" height="140" style="width:100%"></canvas>
         <div id="chart-volume-empty" style="display:none" class="empty"><div class="ei">💪</div><p>Log workouts to see volume</p></div>
       </div>
 
       <!-- PROGRESS CARD -->
       <div class="card">
-        <div class="card-title">✨ Progress Card</div>
+        <div class="card-title"><i class="hico" data-ic="sparkle"></i>Progress Card</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Generate a shareable one-pager summarising your progress. Choose a period:</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <button class="btn btn-p" onclick="openModal_progressCard(7)">📅 Weekly Card</button>
@@ -1040,19 +1102,40 @@ input.sinp:focus{border-color:var(--accent)}
   </div>
 </div>
 
-<!-- EXERCISE MODAL -->
-<!-- GYM SPLIT MODAL -->
+<!-- GYM SPLIT PICKER MODAL -->
 <div class="mo" id="split-modal">
   <div class="ms">
     <div class="mhandle"></div>
-    <div class="mtitle">Which session?</div>
-    <div class="add-choices" style="grid-template-columns:1fr 1fr 1fr">
-      <button class="add-choice" onclick="startGym('Push')"><span class="add-l">Push</span><span class="add-s">Chest · sho · tri</span></button>
-      <button class="add-choice" onclick="startGym('Pull')"><span class="add-l">Pull</span><span class="add-s">Back · biceps</span></button>
-      <button class="add-choice" onclick="startGym('Legs')"><span class="add-l">Legs</span><span class="add-s">Quads · ham · glutes</span></button>
-    </div>
+    <div class="mtitle">Which day are you training?</div>
+    <div id="split-picker"></div>
     <button class="btn btn-s btn-w" style="margin-top:12px" onclick="startGym('')">Skip — just log as Gym</button>
-    <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('split-modal')">Cancel</button>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn btn-s" style="flex:1" onclick="openSplitEditor()">Edit my split</button>
+      <button class="btn btn-s" style="flex:1" onclick="closeModal('split-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPLIT EDITOR MODAL -->
+<div class="mo" id="split-edit-modal">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div class="mtitle">My workout split</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Set the exercises for each day once. They auto-load (with last session's weights) when you start that day.</div>
+    <div id="split-editor"></div>
+    <button class="btn btn-p btn-w" style="margin-top:14px" onclick="saveSplitEdits()">Save split</button>
+    <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('split-edit-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- EXERCISE PICKER (for split editor) -->
+<div class="mo" id="expick-modal">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div class="mtitle" id="expick-title">Add exercise</div>
+    <div class="ptabs" id="expick-tabs" style="margin-bottom:12px"></div>
+    <div id="expick-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"></div>
+    <button class="btn btn-s btn-w" onclick="closeModal('expick-modal')">Done</button>
   </div>
 </div>
 
@@ -1216,101 +1299,157 @@ function mTab(tab,el){
 }
 
 // ── FOOD SEARCH ───────────────────────────────────────────────
-var SR=[];
+var SR=[];   // Open Food Facts results
+var LR=[];   // local matches (My Foods + history + presets)
 function searchFood(){
   var q=document.getElementById('food-q').value.trim();
   if(!q)return;
+  LR=foodSuggest(q);            // instant, offline, reliable
+  SR=[];
   document.getElementById('food-spin').style.display='block';
-  document.getElementById('food-res').innerHTML='';
-  fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&json=1&page_size=8&fields=product_name,brands,nutriments,serving_quantity,serving_size')
+  renderSearchResults();        // show local matches immediately
+  // AU-biased, popularity-sorted, only products that actually have calories
+  var url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)
+    +'&json=1&page_size=20&sort_by=popularity_key'
+    +'&tagtype_0=countries&tag_contains_0=contains&tag_0=australia'
+    +'&fields=product_name,brands,nutriments,serving_quantity,serving_size';
+  fetch(url)
     .then(function(r){return r.json()})
     .then(function(d){
+      var rows=(d.products||[]).filter(function(p){return p.product_name&&p.nutriments&&(p.nutriments['energy-kcal_100g']||p.nutriments['energy-kcal'])});
+      if(!rows.length){ // AU filter too tight — retry worldwide
+        return fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&json=1&page_size=20&sort_by=popularity_key&fields=product_name,brands,nutriments,serving_quantity,serving_size')
+          .then(function(r){return r.json()}).then(function(d2){return (d2.products||[]).filter(function(p){return p.product_name&&p.nutriments&&(p.nutriments['energy-kcal_100g']||p.nutriments['energy-kcal'])})});
+      }
+      return rows;
+    })
+    .then(function(rows){
       document.getElementById('food-spin').style.display='none';
-      SR=(d.products||[]).filter(function(p){return p.product_name&&p.nutriments});
+      SR=rows||[];
       renderSearchResults();
     })
     .catch(function(){
       document.getElementById('food-spin').style.display='none';
-      document.getElementById('food-res').innerHTML='<p style="color:var(--red);font-size:13px;text-align:center;padding:16px">Search failed — check your connection and try again.</p>';
+      renderSearchResults(); // local matches still useful even if OFF fails
     });
 }
 function renderSearchResults(){
-  if(!SR||!SR.length){document.getElementById('food-res').innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px">No results.</p>';return}
-  document.getElementById('food-res').innerHTML=SR.map(function(p,i){
-    var n=p.nutriments,k=Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),pr=r1(n.proteins_100g||0),ca=r1(n.carbohydrates_100g||0),ft=r1(n.fat_100g||0);
-    return '<div class="fr-item" onclick="pickSearchFood('+i+')">'
-      +'<div class="fr-name">'+esc(p.product_name)+'</div>'
-      +(p.brands?'<div class="fr-brand">'+esc(p.brands)+'</div>':'')
-      +'<div class="fr-macro">'+k+' kcal · P'+pr+'g · C'+ca+'g · F'+ft+'g (per 100g)</div></div>';
-  }).join('');
+  var html='';
+  if(LR&&LR.length){
+    html+='<div class="sr-head">Your foods</div>';
+    html+=LR.map(function(f,i){
+      return '<div class="fr-item" onclick="pickLocalFood('+i+')">'
+        +'<div class="fr-name">'+(f.em||'🍽️')+' '+esc(f.name)+'</div>'
+        +'<div class="fr-macro">'+Math.round(f.cals||0)+' kcal · P'+r1(f.prot||0)+' C'+r1(f.carb||0)+' F'+r1(f.fat||0)+' per serve</div></div>';
+    }).join('');
+  }
+  if(SR&&SR.length){
+    if(LR&&LR.length)html+='<div class="sr-head" style="margin-top:14px">Open Food Facts</div>';
+    html+=SR.map(function(p,i){
+      var n=p.nutriments,k=Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),pr=r1(n.proteins_100g||0),ca=r1(n.carbohydrates_100g||0),ft=r1(n.fat_100g||0);
+      return '<div class="fr-item" onclick="pickSearchFood('+i+')">'
+        +'<div class="fr-name">'+esc(p.product_name)+'</div>'
+        +(p.brands?'<div class="fr-brand">'+esc(p.brands)+'</div>':'')
+        +'<div class="fr-macro">'+k+' kcal · P'+pr+'g · C'+ca+'g · F'+ft+'g (per 100g)</div></div>';
+    }).join('');
+  }
+  if(!html){
+    var searching=document.getElementById('food-spin').style.display==='block';
+    html='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px">'+(searching?'Searching…':'No matches. Try a simpler word (e.g. "yoghurt" not the brand), or add it in the Manual tab — it\'ll then show under Your Foods next time.')+'</p>';
+  }
+  document.getElementById('food-res').innerHTML=html;
 }
 function serveGrams(p){
   var g=parseFloat(p.serving_quantity);
   if(!g||isNaN(g)){var ss=(p.serving_size||'').match(/([\d.]+)\s*g/i);if(ss)g=parseFloat(ss[1]);}
   return (g&&g>0)?g:0; // 0 = no serving size on the product
 }
+
+// ── SHARED SERVES PANEL (search + barcode) ────────────────────
+// cfg: {container, back, name, brand, info, showGps, gps, hint, per:{k,pr,ca,ft,fi}, typeSel, em}
+function openServePanel(cfg){
+  window._sp=cfg;
+  var gpsRow=cfg.showGps
+    ?'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:12px;color:var(--muted)">1 serve =</span><input type="number" id="sp-gps" class="inp" value="'+(+cfg.gps.toFixed(0))+'" inputmode="decimal" style="width:84px;padding:7px 10px;font-size:14px"><span style="font-size:12px;color:var(--muted)">g (optional)</span></div>'
+    :'';
+  var backBtn=cfg.back?'<button onclick="'+cfg.back+'" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 0 10px;-webkit-tap-highlight-color:transparent">‹ Back to results</button>':'';
+  document.getElementById(cfg.container).innerHTML=
+    '<div style="background:var(--input);border-radius:10px;padding:14px;border:1px solid var(--border)">'
+    +backBtn
+    +'<div style="font-size:15px;font-weight:700;margin-bottom:2px">'+esc(cfg.name)+'</div>'
+    +(cfg.brand?'<div style="font-size:12px;color:var(--muted);margin-bottom:8px">'+esc(cfg.brand)+'</div>':'')
+    +(cfg.info?'<div style="font-size:11px;color:var(--muted);margin-bottom:14px">'+cfg.info+'</div>':'')
+    +'<label class="lbl">How many serves?</label>'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+    +'<button class="srv-step" onclick="bumpServe(-0.5)" aria-label="Less">−</button>'
+    +'<input type="number" id="sp-serves" class="inp" value="1" step="0.5" min="0" inputmode="decimal" style="text-align:center;font-size:18px;font-weight:700;flex:1">'
+    +'<button class="srv-step" onclick="bumpServe(0.5)" aria-label="More">+</button>'
+    +'</div>'
+    +gpsRow
+    +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center;background:var(--card);border-radius:10px;padding:10px 6px;margin-bottom:10px">'
+    +'<div><div id="sp-k" style="font-size:18px;font-weight:700;color:var(--accent)">0</div><div style="font-size:9px;color:var(--muted)">kcal</div></div>'
+    +'<div><div id="sp-p" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">P (g)</div></div>'
+    +'<div><div id="sp-c" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">C (g)</div></div>'
+    +'<div><div id="sp-f" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">F (g)</div></div>'
+    +'<div><div id="sp-fi" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">Fibre</div></div>'
+    +'</div>'
+    +(cfg.hint?'<div style="font-size:11px;color:var(--muted);margin-bottom:12px">'+cfg.hint+'</div>':'')
+    +'<button class="btn btn-p btn-w" onclick="addServe()">Add Food</button>'
+    +'</div>';
+  window._spRecalc=function(){
+    var serves=parseFloat(document.getElementById('sp-serves').value)||0,per=window._sp.per,factor;
+    if(window._sp.showGps){var gps=parseFloat(document.getElementById('sp-gps').value)||0;factor=serves*gps/100;}
+    else factor=serves;
+    document.getElementById('sp-k').textContent=Math.round(per.k*factor);
+    document.getElementById('sp-p').textContent=r1(per.pr*factor);
+    document.getElementById('sp-c').textContent=r1(per.ca*factor);
+    document.getElementById('sp-f').textContent=r1(per.ft*factor);
+    document.getElementById('sp-fi').textContent=r1(per.fi*factor);
+  };
+  document.getElementById('sp-serves').addEventListener('input',window._spRecalc);
+  if(cfg.showGps)document.getElementById('sp-gps').addEventListener('input',window._spRecalc);
+  window._spRecalc();
+}
+function bumpServe(d){
+  var el=document.getElementById('sp-serves');if(!el)return;
+  var v=(parseFloat(el.value)||0)+d;if(v<0)v=0;
+  el.value=Math.round(v*100)/100;
+  if(window._spRecalc)window._spRecalc();
+}
+function addServe(){
+  var cfg=window._sp;if(!cfg)return;
+  var serves=parseFloat(document.getElementById('sp-serves').value)||0;
+  if(serves<=0){toast('Enter how many serves');return}
+  var per=cfg.per,factor;
+  if(cfg.showGps){var gps=parseFloat(document.getElementById('sp-gps').value)||0;factor=serves*gps/100;}
+  else factor=serves;
+  var mt=document.getElementById(cfg.typeSel).value;
+  var label=(serves===1?'1 serve':r1(serves)+' serves');
+  addEntry(cfg.name,mt,cfg.em||'🔍',Math.round(per.k*factor),r1(per.pr*factor),r1(per.ca*factor),r1(per.ft*factor),label,r1(per.fi*factor));
+  closeModal('meal-modal');
+}
 function pickSearchFood(i){
   var p=SR[i],n=p.nutriments;
   var k=Math.round(n['energy-kcal_100g']||n['energy-kcal']||0),pr=r1(n.proteins_100g||0),ca=r1(n.carbohydrates_100g||0),ft=r1(n.fat_100g||0),fi=r1(n.fiber_100g||n['fiber-total_100g']||0);
   var g=serveGrams(p),known=g>0;if(!known)g=100;
-  var hint=known?('1 serve = '+(+g.toFixed(0))+'g, from the product label'):'No serving size on this product — 1 serve is set to 100g. Adjust below if you know it.';
-  window._srch={k:k,pr:pr,ca:ca,ft:ft,fi:fi};
-  document.getElementById('food-res').innerHTML=
-    '<div style="background:var(--input);border-radius:10px;padding:14px;border:1px solid var(--border)">'
-    +'<button onclick="renderSearchResults()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0 0 10px;-webkit-tap-highlight-color:transparent">‹ Back to results</button>'
-    +'<div style="font-size:15px;font-weight:700;margin-bottom:2px">'+esc(p.product_name)+'</div>'
-    +(p.brands?'<div style="font-size:12px;color:var(--muted);margin-bottom:8px">'+esc(p.brands)+'</div>':'')
-    +'<div style="font-size:11px;color:var(--muted);margin-bottom:14px">'+k+' kcal · P'+pr+' C'+ca+' F'+ft+' Fi'+fi+' per 100g</div>'
-    +'<label class="lbl">How many serves?</label>'
-    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
-    +'<button class="srv-step" onclick="bumpServe(-0.5)" aria-label="Less">−</button>'
-    +'<input type="number" id="srch-serves" class="inp" value="1" step="0.5" min="0" inputmode="decimal" style="text-align:center;font-size:18px;font-weight:700;flex:1">'
-    +'<button class="srv-step" onclick="bumpServe(0.5)" aria-label="More">+</button>'
-    +'</div>'
-    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'
-    +'<span style="font-size:12px;color:var(--muted)">1 serve =</span>'
-    +'<input type="number" id="srch-gps" class="inp" value="'+(+g.toFixed(0))+'" inputmode="decimal" style="width:84px;padding:7px 10px;font-size:14px">'
-    +'<span style="font-size:12px;color:var(--muted)">g (optional)</span>'
-    +'</div>'
-    +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center;background:var(--card);border-radius:10px;padding:10px 6px;margin-bottom:10px">'
-    +'<div><div id="srch-k" style="font-size:18px;font-weight:700;color:var(--accent)">0</div><div style="font-size:9px;color:var(--muted)">kcal</div></div>'
-    +'<div><div id="srch-p" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">P (g)</div></div>'
-    +'<div><div id="srch-c" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">C (g)</div></div>'
-    +'<div><div id="srch-f" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">F (g)</div></div>'
-    +'<div><div id="srch-fi" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">Fibre</div></div>'
-    +'</div>'
-    +'<div style="font-size:11px;color:var(--muted);margin-bottom:12px">'+hint+'</div>'
-    +'<button class="btn btn-p btn-w" onclick="addSearchServe('+i+')">Add Food</button>'
-    +'</div>';
-  window._srchRecalc=function(){
-    var serves=parseFloat(document.getElementById('srch-serves').value)||0;
-    var gps=parseFloat(document.getElementById('srch-gps').value)||0;
-    var factor=serves*gps/100,s=window._srch;
-    document.getElementById('srch-k').textContent=Math.round(s.k*factor);
-    document.getElementById('srch-p').textContent=r1(s.pr*factor);
-    document.getElementById('srch-c').textContent=r1(s.ca*factor);
-    document.getElementById('srch-f').textContent=r1(s.ft*factor);
-    document.getElementById('srch-fi').textContent=r1(s.fi*factor);
-  };
-  document.getElementById('srch-serves').addEventListener('input',window._srchRecalc);
-  document.getElementById('srch-gps').addEventListener('input',window._srchRecalc);
-  window._srchRecalc(); // show one-serve values immediately
+  openServePanel({
+    container:'food-res',back:'renderSearchResults()',name:p.product_name,brand:p.brands,
+    info:k+' kcal · P'+pr+' C'+ca+' F'+ft+' Fi'+fi+' per 100g',
+    showGps:true,gps:g,
+    hint:known?('1 serve = '+(+g.toFixed(0))+'g, from the product label'):'No serving size on this product — 1 serve is set to 100g. Adjust above if you know it.',
+    per:{k:k,pr:pr,ca:ca,ft:ft,fi:fi},typeSel:'m-type-s',em:'🔍'
+  });
 }
-function bumpServe(d){
-  var el=document.getElementById('srch-serves');if(!el)return;
-  var v=(parseFloat(el.value)||0)+d;if(v<0)v=0;
-  el.value=Math.round(v*100)/100;
-  if(window._srchRecalc)window._srchRecalc();
-}
-function addSearchServe(i){
-  var p=SR[i],mt=document.getElementById('m-type-s').value;
-  var serves=parseFloat(document.getElementById('srch-serves').value)||0;
-  var gps=parseFloat(document.getElementById('srch-gps').value)||0;
-  if(serves<=0){toast('Enter how many serves');return}
-  var factor=serves*gps/100,s=window._srch;
-  var label=(serves===1?'1 serve':r1(serves)+' serves');
-  addEntry(p.product_name,mt,'🔍',Math.round(s.k*factor),r1(s.pr*factor),r1(s.ca*factor),r1(s.ft*factor),label,r1(s.fi*factor));
-  closeModal('meal-modal');
+function pickLocalFood(i){
+  var f=LR[i];if(!f)return;
+  openServePanel({
+    container:'food-res',back:'renderSearchResults()',name:f.name,brand:'',
+    info:Math.round(f.cals||0)+' kcal · P'+r1(f.prot||0)+' C'+r1(f.carb||0)+' F'+r1(f.fat||0)+' Fi'+r1(f.fibre||0)+' per serve',
+    showGps:false,
+    hint:'1 serve = how you saved this food before.',
+    per:{k:Math.round(f.cals||0),pr:r1(f.prot||0),ca:r1(f.carb||0),ft:r1(f.fat||0),fi:r1(f.fibre||0)},
+    typeSel:'m-type-s',em:f.em||'🍽️'
+  });
 }
 
 // ── MANUAL MEAL ───────────────────────────────────────────────
@@ -1452,41 +1591,18 @@ function lookupBarcode(code){
       if(!fi && (n.fiber_serving) && servG){fi=r1(n.fiber_serving*100/servG)}
       var hasServ=!!(servG&&servG>0);
       if(!hasServ)servG=100;
-      var servLabel=hasServ?('1 serving · '+(+servG.toFixed(0))+'g'+(p.serving_size&&!/^[\d.]+\s*g$/i.test(p.serving_size.trim())?' ('+esc(p.serving_size)+')':'')):'per 100g (no serving size on label)';
+      var hint=hasServ
+        ?('1 serve = '+(+servG.toFixed(0))+'g'+(p.serving_size&&!/^[\d.]+\s*g$/i.test(p.serving_size.trim())?' ('+esc(p.serving_size)+')':'')+', from the product label')
+        :'No serving size on this product — 1 serve is set to 100g. Adjust above if you know it.';
       document.getElementById('bc-status').textContent='✓ Found!';
-      document.getElementById('bc-result').innerHTML=
-        '<div style="background:var(--input);border-radius:10px;padding:14px;border:1px solid var(--border)">'
-        +'<div style="font-size:15px;font-weight:700;margin-bottom:2px">'+esc(nm)+'</div>'
-        +(br?'<div style="font-size:12px;color:var(--muted);margin-bottom:8px">'+esc(br)+'</div>':'')
-        +'<div style="font-size:11px;color:var(--muted);margin-bottom:10px">'+k+' kcal · P'+pr+' C'+ca+' F'+ft+' Fi'+fi+' per 100g</div>'
-        +'<div class="fg" style="margin-bottom:10px"><label class="lbl">Serving size (g) — '+servLabel+'</label><input type="number" id="bc-sv" class="inp" value="'+(+servG.toFixed(0))+'" inputmode="decimal"></div>'
-        +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center;background:var(--card);border-radius:10px;padding:10px 6px;margin-bottom:12px">'
-        +'<div><div id="bc-cp" style="font-size:18px;font-weight:700;color:var(--accent)">0</div><div style="font-size:9px;color:var(--muted)">kcal</div></div>'
-        +'<div><div id="bc-pp" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">P (g)</div></div>'
-        +'<div><div id="bc-cc" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">C (g)</div></div>'
-        +'<div><div id="bc-ff" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">F (g)</div></div>'
-        +'<div><div id="bc-fp" style="font-size:15px;font-weight:700">0</div><div style="font-size:9px;color:var(--muted)">Fibre</div></div>'
-        +'</div>'
-        +'<button class="btn btn-p btn-w" onclick="addBarcodeFood(\''+esc(nm).replace(/'/g,"\\'")+'\','+k+','+pr+','+ca+','+ft+','+fi+')">Add Food</button>'
-        +'</div>';
-      function recalc(){
-        var sv=parseFloat(document.getElementById('bc-sv').value)||servG;
-        document.getElementById('bc-cp').textContent=Math.round(k*sv/100);
-        document.getElementById('bc-pp').textContent=r1(pr*sv/100);
-        document.getElementById('bc-cc').textContent=r1(ca*sv/100);
-        document.getElementById('bc-ff').textContent=r1(ft*sv/100);
-        document.getElementById('bc-fp').textContent=r1(fi*sv/100);
-      }
-      document.getElementById('bc-sv').addEventListener('input',recalc);
-      recalc(); // auto-populate one-serve values immediately
+      openServePanel({
+        container:'bc-result',back:'',name:nm,brand:br,
+        info:k+' kcal · P'+pr+' C'+ca+' F'+ft+' Fi'+fi+' per 100g',
+        showGps:true,gps:servG,hint:hint,
+        per:{k:k,pr:pr,ca:ca,ft:ft,fi:fi},typeSel:'m-type-b',em:'📷'
+      });
     })
     .catch(function(){document.getElementById('bc-result').innerHTML='<p style="color:var(--red);font-size:13px;text-align:center;padding:12px">Network error — check your connection and try again.</p>'});
-}
-
-function addBarcodeFood(nm,k100,p100,c100,f100,fi100){
-  var sv=parseFloat(document.getElementById('bc-sv').value)||100,mt=document.getElementById('m-type-b').value;
-  addEntry(nm,mt,'📷',Math.round(k100*sv/100),r1(p100*sv/100),r1(c100*sv/100),r1(f100*sv/100),sv,r1((fi100||0)*sv/100));
-  closeModal('meal-modal');
 }
 
 // ── MY FOOD LIBRARY ───────────────────────────────────────────
@@ -1678,6 +1794,97 @@ function startWorkout(type,split){
   renderWkEx();renderLibExercises();
 }
 function startGym(split){closeModal('split-modal');startWorkout('Gym',split);}
+
+// ── WORKOUT SPLIT (5-day routine) ─────────────────────────────
+var DEFAULT_SPLIT=[
+ {key:'Chest',ex:[{name:'Bench Press',equip:'Barbell'},{name:'Incline Press',equip:'Dumbbell'},{name:'Chest Fly',equip:'Cable'},{name:'Chest Dip',equip:'Bodyweight'}]},
+ {key:'Back',ex:[{name:'Deadlift',equip:'Barbell'},{name:'Pull-Up',equip:'Bodyweight'},{name:'Row',equip:'Barbell'},{name:'Lat Pulldown',equip:'Cable'}]},
+ {key:'Legs',ex:[{name:'Squat',equip:'Barbell'},{name:'Romanian Deadlift',equip:'Barbell'},{name:'Leg Press',equip:'Machine'},{name:'Leg Curl',equip:'Machine'},{name:'Calf Raise',equip:'Machine'}]},
+ {key:'Shoulders',ex:[{name:'Overhead Press',equip:'Barbell'},{name:'Lateral Raise',equip:'Dumbbell'},{name:'Rear Delt Fly',equip:'Cable'},{name:'Shrug',equip:'Dumbbell'}]},
+ {key:'Arms',ex:[{name:'Bicep Curl',equip:'Dumbbell'},{name:'Tricep Pushdown',equip:'Cable'},{name:'Hammer Curl',equip:'Dumbbell'},{name:'Skull Crushers',equip:'Barbell'}]}
+];
+function getSplit(){try{var s=JSON.parse(localStorage.getItem('ft_split')||'null');if(s&&s.length)return s;}catch(e){}localStorage.setItem('ft_split',JSON.stringify(DEFAULT_SPLIT));return JSON.parse(JSON.stringify(DEFAULT_SPLIT));}
+function saveSplitData(s){localStorage.setItem('ft_split',JSON.stringify(s));}
+function lastHitDays(key){
+  var w=gw();
+  for(var i=0;i<w.length;i++){
+    if((w[i].split||'')===key&&w[i].date){
+      return Math.floor((Date.now()-new Date(w[i].date+'T12:00:00').getTime())/86400000);
+    }
+  }
+  return null;
+}
+function daysAgoLabel(n){if(n===null)return 'Not logged yet';if(n<=0)return 'Today';if(n===1)return 'Yesterday';return n+' days ago';}
+function openSplitPicker(){renderSplitPicker();openModal('split-modal');}
+function toggleGymSplit(){
+  var item=document.getElementById('gym-row').parentElement;
+  var open=item.classList.toggle('open');
+  if(open)renderGymSplitInline();
+}
+function renderGymSplitInline(){
+  var split=getSplit();
+  document.getElementById('gym-splits').innerHTML=split.map(function(d){
+    var n=lastHitDays(d.key),names=d.ex.map(function(e){return e.name}).slice(0,3).join(', ');
+    return '<div class="split-row" onclick="event.stopPropagation();startSplitDay(\''+esc(d.key)+'\')">'
+      +'<div style="min-width:0"><div class="split-name">'+esc(d.key)+'</div>'
+      +'<div class="split-sub">'+d.ex.length+' exercise'+(d.ex.length===1?'':'s')+(names?' · '+esc(names)+(d.ex.length>3?'…':''):'')+'</div></div>'
+      +'<span class="split-last">'+daysAgoLabel(n)+'</span></div>';
+  }).join('')
+    +'<div class="split-editlink" onclick="event.stopPropagation();openSplitEditor()">Edit my split</div>';
+}
+function renderSplitPicker(){
+  var split=getSplit();
+  document.getElementById('split-picker').innerHTML=split.map(function(d){
+    var n=lastHitDays(d.key),names=d.ex.map(function(e){return e.name}).slice(0,3).join(', ');
+    return '<div class="splitblk" onclick="startSplitDay(\''+esc(d.key)+'\')">'
+      +'<span class="dtico" data-ic="dumbbell"></span>'
+      +'<div style="flex:1;min-width:0"><div class="sb-name">'+esc(d.key)+'</div>'
+      +'<div class="sb-meta">'+d.ex.length+' exercise'+(d.ex.length===1?'':'s')+(names?' · '+esc(names)+(d.ex.length>3?'…':''):'')+'</div></div>'
+      +'<div class="sb-last">'+daysAgoLabel(n)+'</div></div>';
+  }).join('');
+  renderIcons(document.getElementById('split-picker'));
+}
+function startSplitDay(key){
+  closeModal('split-modal');
+  var day=getSplit().find(function(d){return d.key===key});
+  startWorkout('Gym',key);
+  if(day&&day.ex.length){
+    day.ex.forEach(function(e){AW.exercises.push({name:e.name,type:'normal',equip:e.equip||'',sets:defaultSetsFor(e.name,e.equip||'')});});
+    renderWkEx();
+  }
+  toast('✓ '+key+' loaded — weights from last time');
+}
+
+// Split editor
+var SPLIT_EDIT=null,EXPICK_TARGET=null,EXPICK_TAB='chest';
+function openSplitEditor(){closeModal('split-modal');SPLIT_EDIT=JSON.parse(JSON.stringify(getSplit()));renderSplitEditor();openModal('split-edit-modal');}
+function renderSplitEditor(){
+  document.getElementById('split-editor').innerHTML=SPLIT_EDIT.map(function(d,di){
+    var ex=d.ex.map(function(e,ei){
+      return '<div class="sed-ex"><span class="sed-ex-nm">'+esc(e.name)+'</span>'
+        +'<button class="sed-mini" onclick="moveSplitEx('+di+','+ei+',-1)" aria-label="Move up">↑</button>'
+        +'<button class="sed-mini" onclick="moveSplitEx('+di+','+ei+',1)" aria-label="Move down">↓</button>'
+        +'<button class="sed-mini" onclick="removeSplitEx('+di+','+ei+')" aria-label="Remove">×</button></div>';
+    }).join('');
+    return '<div class="sed-day"><div class="sed-hd"><span class="dtico" data-ic="dumbbell"></span><span class="sb-name">'+esc(d.key)+'</span>'
+      +'<button class="btn btn-p btn-sm" onclick="openExPicker('+di+')">+ Add</button></div>'
+      +(ex||'<div style="font-size:12px;color:var(--muted);padding:6px 0">No exercises yet — tap + Add.</div>')+'</div>';
+  }).join('');
+  renderIcons(document.getElementById('split-editor'));
+}
+function moveSplitEx(di,ei,dir){var a=SPLIT_EDIT[di].ex,ni=ei+dir;if(ni<0||ni>=a.length)return;var t=a[ei];a[ei]=a[ni];a[ni]=t;renderSplitEditor();}
+function removeSplitEx(di,ei){SPLIT_EDIT[di].ex.splice(ei,1);renderSplitEditor();}
+function openExPicker(di){EXPICK_TARGET=di;document.getElementById('expick-title').textContent='Add to '+SPLIT_EDIT[di].key;renderExPick();openModal('expick-modal');}
+function renderExPick(){
+  var parts=[['chest','Chest'],['back','Back'],['shoulders','Shoulders'],['arms','Arms'],['legs','Legs'],['core','Core'],['cardio','Cardio']];
+  document.getElementById('expick-tabs').innerHTML=parts.map(function(p){return '<div class="pt'+(p[0]===EXPICK_TAB?' on':'')+'" onclick="setExPickTab(\''+p[0]+'\')">'+p[1]+'</div>';}).join('');
+  document.getElementById('expick-list').innerHTML=(EX_LIB[EXPICK_TAB]||[]).map(function(nm){
+    return '<div class="expick-chip" onclick="addSplitEx(\''+esc(nm).replace(/'/g,"\\'")+'\')">'+esc(nm)+'</div>';
+  }).join('');
+}
+function setExPickTab(t){EXPICK_TAB=t;renderExPick();}
+function addSplitEx(name){if(EXPICK_TARGET===null)return;SPLIT_EDIT[EXPICK_TARGET].ex.push({name:name,equip:''});toast('✓ '+name+' added');renderSplitEditor();}
+function saveSplitEdits(){saveSplitData(SPLIT_EDIT);closeModal('expick-modal');closeModal('split-edit-modal');toast('✓ Split saved');}
 function wkTitle(wk){
   if(wk.split)return wk.split;
   var ex=(wk.exercises||[]).map(function(e){return e.name});
@@ -2078,7 +2285,7 @@ function editWkDur(i){
   if(isNaN(mins)||mins<0){toast('Enter a valid number of minutes');return}
   w[i].dur=mins*60;sw(w);renderWkHist();updateHome();toast('✓ Duration updated — calories recalculated');
 }
-function wkEm(t){return{Gym:'🏋️',Run:'🏃',Badminton:'🏸',Other:'⚡'}[t]||'💪'}
+function wkEm(t){return ic({Gym:'dumbbell',Run:'run',Badminton:'shuttle',Other:'bolt'}[t]||'dumbbell')}
 
 // ── WORKOUT DETAIL + LAST-TIME ────────────────────────────────
 function fmtSets(sets){
@@ -2380,7 +2587,18 @@ function loadSettings(){
   setV('s-gym',s.calGym||'');setV('s-run',s.calRun||'');setV('s-bad',s.calBad||'');setV('s-rst',s.calRst||'');
   setV('s-p',s.protein||'');setV('s-c',s.carbs||'');setV('s-f',s.fat||'');setV('s-fi',s.fibre||'');
   document.getElementById('s-dt').value=s.dt||'rst';
+  syncDayTypeButtons();
   updateMacroKcal();
+}
+function setDayType(v){
+  var inp=document.getElementById('s-dt');if(inp)inp.value=v;
+  syncDayTypeButtons();
+}
+function syncDayTypeButtons(){
+  var v=(document.getElementById('s-dt')||{}).value||'rst';
+  document.querySelectorAll('#dt-grid .dtbtn').forEach(function(b){
+    b.className='dtbtn'+(b.getAttribute('data-dt')===v?' on':'');
+  });
 }
 function updateMacroKcal(){
   var p=parseInt(document.getElementById('s-p').value)||0;
@@ -2471,9 +2689,11 @@ function updateHome(){
   bar('h-bar',tot.k,goal);
   setRing('ring',tot.k/goal);
   set('pct-cal',Math.round(tot.k/goal*100)+'%');
-  var dtL={gym:'🏋️ Gym Day',run:'🏃 Run Day',bad:'🏸 Badminton Day',rst:'🛋️ Rest Day'};
+  var dtL={gym:'Gym Day',run:'Run Day',bad:'Badminton Day',rst:'Rest Day'};
+  var dtI={gym:'dumbbell',run:'run',bad:'shuttle',rst:'rest'};
   var dtC={gym:'gym',run:'run',bad:'bad',rst:'rst'};
-  var badge=document.getElementById('dtp');badge.textContent=dtL[s.dt||'rst']||'Rest Day';badge.className='dtp '+(dtC[s.dt]||'rst');
+  var dk=s.dt||'rst';
+  var badge=document.getElementById('dtp');badge.innerHTML='<span class="dtp-ic">'+ic(dtI[dk]||'rest')+'</span>'+(dtL[dk]||'Rest Day');badge.className='dtp '+(dtC[s.dt]||'rst');
   var b=gb(),l=b[0]||{};set('h-wt',l.wt||'—');set('h-bmi',l.bmi||'—');
   set('h-st',streak());
   updateWaterUI();
@@ -2508,6 +2728,26 @@ function setRing(id,frac){var el=document.getElementById(id);if(!el)return;var r
 function toggleRingPct(){var h=document.querySelector('.ring-hero');if(h)h.classList.toggle('show-pct')}
 function hexA(hex,a){var h=hex.replace('#','');return'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')'}
 function r1(n){return Math.round(n*10)/10}
+// ── LINE ICONS (themed, replace structural emoji) ─────────────
+var ICONS={
+  ruler:'<path d="M3 8h18v8H3z"/><path d="M7 8v3M11 8v3M15 8v3M19 8v3"/>',
+  flame:'<path d="M12 3c1.2 3.2 4 4.3 4 8a4 4 0 0 1-8 0c0-1.8 1-3 2-4 .1 1.8 1 2.7 2 2.7 0-2-2-3-2-6.7z"/>',
+  scale:'<path d="M12 3v18M8 21h8M5 7h14"/><path d="M5 7l-2.5 6.5h5L5 7zM19 7l-2.5 6.5h5L19 7z"/>',
+  dumbbell:'<path d="M6 12h12"/><rect x="2.5" y="9" width="3" height="6" rx="1"/><rect x="18.5" y="9" width="3" height="6" rx="1"/><path d="M6 8v8M18 8v8"/>',
+  target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8"/>',
+  drop:'<path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11z"/>',
+  user:'<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6"/>',
+  calendar:'<rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9.5h16M8 3v4M16 3v4"/>',
+  leaf:'<path d="M5 19c-1-8 6-14 14-13C20 14 13 20 5 19z"/><path d="M5.5 18.5C9 14 12 12 16 10.5"/>',
+  chart:'<path d="M4 4v16h16"/><rect x="7.5" y="11" width="3" height="6"/><rect x="12.5" y="7" width="3" height="10"/><rect x="17.5" y="13" width="3" height="4"/>',
+  sparkle:'<path d="M12 3l1.9 5.6L19.5 10l-5.6 1.4L12 17l-1.9-5.6L4.5 10l5.6-1.4z"/>',
+  run:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  shuttle:'<circle cx="12" cy="12" r="9"/><path d="M4.5 6c4 2.5 9 2.5 15 0M4.5 18c4-2.5 9-2.5 15 0"/>',
+  bolt:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  rest:'<path d="M4 11V8.5A2.5 2.5 0 0 1 6.5 6h11A2.5 2.5 0 0 1 20 8.5V11"/><path d="M3 12.5A2.5 2.5 0 0 1 7 14.5V16h10v-1.5a2.5 2.5 0 0 1 4 2v3H3z"/><path d="M6 19v2M18 19v2"/>'
+};
+function ic(n){return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[n]||'')+'</svg>'}
+function renderIcons(root){(root||document).querySelectorAll('[data-ic]').forEach(function(el){if(el.getAttribute('data-ic-done'))return;el.innerHTML=ic(el.getAttribute('data-ic'));el.setAttribute('data-ic-done','1');});}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 // ── GOOGLE DRIVE SYNC ─────────────────────────────────────────
@@ -3139,10 +3379,10 @@ function renderSummary(){
   var goalKcal=calGoal(s);
   document.getElementById('sum-weekly').innerHTML=
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-    +'<div class="sb"><div class="si">🔥</div><div class="sv" style="color:var(--yellow)">'+avgCals+'</div><div class="slb">Avg kcal/day</div></div>'
-    +'<div class="sb"><div class="si">🏋️</div><div class="sv" style="color:var(--blue)">'+wkCount+'</div><div class="slb">Workouts</div></div>'
-    +'<div class="sb"><div class="si">⚖️</div><div class="sv" style="color:'+(wtChange===null?'var(--muted)':wtChange<=0?'var(--accent)':'var(--red)')+'">'+(wtChange===null?'—':(wtChange>0?'+':'')+wtChange+'kg')+'</div><div class="slb">Weight change</div></div>'
-    +'<div class="sb"><div class="si">🎯</div><div class="sv" style="color:var(--accent)">'+(goalKcal?Math.round(avgCals/goalKcal*100)+'%':'—')+'</div><div class="slb">Calorie goal hit</div></div>'
+    +'<div class="sb"><div class="si">'+ic('flame')+'</div><div class="sv" style="color:var(--yellow)">'+avgCals+'</div><div class="slb">Avg kcal/day</div></div>'
+    +'<div class="sb"><div class="si">'+ic('dumbbell')+'</div><div class="sv" style="color:var(--blue)">'+wkCount+'</div><div class="slb">Workouts</div></div>'
+    +'<div class="sb"><div class="si">'+ic('scale')+'</div><div class="sv" style="color:'+(wtChange===null?'var(--muted)':wtChange<=0?'var(--accent)':'var(--red)')+'">'+(wtChange===null?'—':(wtChange>0?'+':'')+wtChange+'kg')+'</div><div class="slb">Weight change</div></div>'
+    +'<div class="sb"><div class="si">'+ic('target')+'</div><div class="sv" style="color:var(--accent)">'+(goalKcal?Math.round(avgCals/goalKcal*100)+'%':'—')+'</div><div class="slb">Calorie goal hit</div></div>'
     +'</div>';
 }
 
@@ -3267,6 +3507,8 @@ function init(){
   renderMealPlans();renderPrepList();
   restoreAW();
   updateAutoBackupUI();maybeAutoBackup();
+  renderIcons();
+  try{var ss=document.getElementById('split-summary');if(ss)ss.textContent=getSplit().map(function(d){return d.key}).join(' · ');}catch(e){}
 }
 init();
 </script>
