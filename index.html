@@ -1096,6 +1096,7 @@ input.sinp:focus{border-color:var(--accent)}
 
     <button class="btn btn-p btn-w" style="margin-bottom:8px" onclick="doExportJSON()">⬇️ Export selected (JSON backup)</button>
     <button class="btn btn-s btn-w" style="margin-bottom:8px" onclick="doExportGymCSV()">🏋️ Export gym lifting history (CSV)</button>
+    <button class="btn btn-s btn-w" style="margin-bottom:8px" onclick="doExportBodyCSV()">📏 Export body measurements (CSV)</button>
     <button class="btn btn-s btn-w" style="margin-bottom:8px" onclick="doExportNutritionCSV()">🍽️ Export nutrition log (CSV)</button>
     <div id="export-status" style="font-size:12px;color:var(--muted);text-align:center;margin:6px 0 2px;min-height:16px"></div>
     <button class="btn btn-s btn-w" style="margin-top:6px" onclick="closeModal('export-modal')">Done</button>
@@ -1793,7 +1794,7 @@ function startWorkout(type,split){
   tickWk();
   renderWkEx();renderLibExercises();
 }
-function startGym(split){closeModal('split-modal');startWorkout('Gym',split);}
+function startGym(split){closeModal('split-modal');var item=document.getElementById('gym-row');if(item&&item.parentElement)item.parentElement.classList.remove('open');startWorkout('Gym',split);}
 
 // ── WORKOUT SPLIT (5-day routine) ─────────────────────────────
 var DEFAULT_SPLIT=[
@@ -1830,6 +1831,7 @@ function renderGymSplitInline(){
       +'<div class="split-sub">'+d.ex.length+' exercise'+(d.ex.length===1?'':'s')+(names?' · '+esc(names)+(d.ex.length>3?'…':''):'')+'</div></div>'
       +'<span class="split-last">'+daysAgoLabel(n)+'</span></div>';
   }).join('')
+    +'<div class="split-row" style="justify-content:center" onclick="event.stopPropagation();startGym(\'\')"><span class="split-name" style="color:var(--muted);font-weight:600">Skip — just log as Gym</span></div>'
     +'<div class="split-editlink" onclick="event.stopPropagation();openSplitEditor()">Edit my split</div>';
 }
 function renderSplitPicker(){
@@ -1846,6 +1848,7 @@ function renderSplitPicker(){
 }
 function startSplitDay(key){
   closeModal('split-modal');
+  var item=document.getElementById('gym-row');if(item&&item.parentElement)item.parentElement.classList.remove('open');
   var day=getSplit().find(function(d){return d.key===key});
   startWorkout('Gym',key);
   if(day&&day.ex.length){
@@ -2961,6 +2964,16 @@ function doExportGymCSV(){
   });
   var ok=ftDownload('fittrack-gym-history-'+td()+'.csv',toCSV(rows),'text/csv');
   document.getElementById('export-status').textContent=ok?'✓ Gym history CSV ready ('+(rows.length-1)+' sets).':'Could not create the file on this browser.';
+}
+function doExportBodyCSV(){
+  var b=gb().slice().sort(function(a,z){return (a.date||'').localeCompare(z.date||'')});
+  if(!b.length){document.getElementById('export-status').textContent='No measurements logged yet.';return}
+  var rows=[['Date','Weight (kg)','BMI','Body Fat % (final)','Body Fat % (Navy)','Body Fat % (BMI est.)','BF manually overridden','Neck (cm)','Chest (cm)','Navel (cm)','Hip (cm)','Waist (cm)','Thigh (cm)','Bicep (cm)']];
+  b.forEach(function(x){
+    rows.push([x.date||'',x.wt||'',x.bmi||'',x.bf||'',x.bfNavy||'',x.bfBmi||'',x.bfOverridden?'Yes':'No',x.nk||'',x.ch||'',x.nv||'',x.hp||'',x.wa||'',x.th||'',x.bi||'']);
+  });
+  var ok=ftDownload('fittrack-body-measurements-'+td()+'.csv',toCSV(rows),'text/csv');
+  document.getElementById('export-status').textContent=ok?'✓ Measurements CSV ready ('+(rows.length-1)+' entries).':'Could not create the file on this browser.';
 }
 function doExportNutritionCSV(){
   var keys=Object.keys(localStorage).filter(function(k){return k.indexOf('ft_m_')===0}).sort();
