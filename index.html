@@ -187,6 +187,18 @@ input.sinp:focus{border-color:var(--accent)}
 .expick-chip{background:var(--input);border:1px solid var(--border);border-radius:20px;padding:6px 13px;font-size:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .expick-chip:active{background:var(--accent-soft);border-color:var(--accent)}
 
+/* SPLITS MANAGER */
+.splits-row{display:flex;align-items:center;gap:11px;background:var(--input);border:1px solid var(--border);border-radius:14px;padding:12px 13px;margin-bottom:8px}
+.splits-row.active{border-color:var(--accent);background:var(--accent-soft)}
+.splits-row-main{flex:1;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.splits-row-name{font-size:14px;font-weight:700;color:var(--txt)}
+.splits-row-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.splits-active-badge{font-size:10px;font-weight:700;color:var(--on-accent);background:var(--accent);border-radius:99px;padding:2px 8px;margin-left:8px;vertical-align:1px}
+.splits-row-del{width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:15px;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.sed-day-name{flex:1;background:transparent;border:none;color:var(--txt);font-size:15px;font-weight:700;font-family:inherit;outline:none;padding:0;min-width:0}
+.sed-day-name:focus{color:var(--accent)}
+.sed-day-del{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:14px;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+
 /* FOOD RESULTS */
 .fr-item{padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .fr-item:last-child{border-bottom:none}
@@ -550,13 +562,13 @@ input.sinp:focus{border-color:var(--accent)}
           </div>
         </div>
 
-        <!-- MY SPLIT -->
+        <!-- MY SPLITS -->
         <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
           <div style="min-width:0">
-            <div style="font-size:14px;font-weight:700;color:var(--txt)">My 5-day split</div>
+            <div style="font-size:14px;font-weight:700;color:var(--txt)" id="split-active-name">My Split</div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px" id="split-summary">Chest · Back · Legs · Shoulders · Arms</div>
           </div>
-          <button class="btn btn-s btn-sm" style="flex-shrink:0" onclick="openSplitEditor()">Edit</button>
+          <button class="btn btn-s btn-sm" style="flex-shrink:0" onclick="openSplitsManager()">Manage</button>
         </div>
 
         <!-- EXERCISE LIBRARY BY BODY PART -->
@@ -1103,7 +1115,7 @@ input.sinp:focus{border-color:var(--accent)}
   </div>
 </div>
 
-<!-- GYM SPLIT PICKER MODAL -->
+<!-- GYM SPLIT PICKER MODAL (legacy quick-pick, kept for compatibility) -->
 <div class="mo" id="split-modal">
   <div class="ms">
     <div class="mhandle"></div>
@@ -1111,9 +1123,20 @@ input.sinp:focus{border-color:var(--accent)}
     <div id="split-picker"></div>
     <button class="btn btn-s btn-w" style="margin-top:12px" onclick="startGym('')">Skip — just log as Gym</button>
     <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="btn btn-s" style="flex:1" onclick="openSplitEditor()">Edit my split</button>
       <button class="btn btn-s" style="flex:1" onclick="closeModal('split-modal')">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- SPLITS MANAGER MODAL -->
+<div class="mo" id="splits-mgr-modal">
+  <div class="ms">
+    <div class="mhandle"></div>
+    <div class="mtitle">My Splits</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Keep as many splits as you like — PPL, Upper/Lower, a 5-day muscle split. Pick one to use as active; only the active split loads under Gym.</div>
+    <div id="splits-list"></div>
+    <button class="btn btn-p btn-w" style="margin-top:12px" onclick="newSplit()">+ New split</button>
+    <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('splits-mgr-modal')">Done</button>
   </div>
 </div>
 
@@ -1121,10 +1144,12 @@ input.sinp:focus{border-color:var(--accent)}
 <div class="mo" id="split-edit-modal">
   <div class="ms">
     <div class="mhandle"></div>
-    <div class="mtitle">My workout split</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Set the exercises for each day once. They auto-load (with last session's weights) when you start that day.</div>
+    <div class="mtitle">Edit split</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Name the split, then write in whatever days you train — Push/Pull/Legs, Upper/Lower, Legs (Hamstring), anything.</div>
+    <div class="fg" style="margin-bottom:14px"><label class="lbl">Split name</label><input type="text" id="sed-split-name" class="inp" placeholder="e.g. Push/Pull/Legs"></div>
     <div id="split-editor"></div>
-    <button class="btn btn-p btn-w" style="margin-top:14px" onclick="saveSplitEdits()">Save split</button>
+    <button class="btn btn-s btn-w" style="margin-bottom:14px" onclick="addSplitDay()">+ Add day</button>
+    <button class="btn btn-p btn-w" onclick="saveSplitEdits()">Save split</button>
     <button class="btn btn-s btn-w" style="margin-top:8px" onclick="closeModal('split-edit-modal')">Cancel</button>
   </div>
 </div>
@@ -1796,16 +1821,40 @@ function startWorkout(type,split){
 }
 function startGym(split){closeModal('split-modal');var item=document.getElementById('gym-row');if(item&&item.parentElement)item.parentElement.classList.remove('open');startWorkout('Gym',split);}
 
-// ── WORKOUT SPLIT (5-day routine) ─────────────────────────────
-var DEFAULT_SPLIT=[
+// ── WORKOUT SPLITS (multiple named splits, each with freeform days) ──
+var DEFAULT_SPLIT_DAYS=[
  {key:'Chest',ex:[{name:'Bench Press',equip:'Barbell'},{name:'Incline Press',equip:'Dumbbell'},{name:'Chest Fly',equip:'Cable'},{name:'Chest Dip',equip:'Bodyweight'}]},
  {key:'Back',ex:[{name:'Deadlift',equip:'Barbell'},{name:'Pull-Up',equip:'Bodyweight'},{name:'Row',equip:'Barbell'},{name:'Lat Pulldown',equip:'Cable'}]},
  {key:'Legs',ex:[{name:'Squat',equip:'Barbell'},{name:'Romanian Deadlift',equip:'Barbell'},{name:'Leg Press',equip:'Machine'},{name:'Leg Curl',equip:'Machine'},{name:'Calf Raise',equip:'Machine'}]},
  {key:'Shoulders',ex:[{name:'Overhead Press',equip:'Barbell'},{name:'Lateral Raise',equip:'Dumbbell'},{name:'Rear Delt Fly',equip:'Cable'},{name:'Shrug',equip:'Dumbbell'}]},
  {key:'Arms',ex:[{name:'Bicep Curl',equip:'Dumbbell'},{name:'Tricep Pushdown',equip:'Cable'},{name:'Hammer Curl',equip:'Dumbbell'},{name:'Skull Crushers',equip:'Barbell'}]}
 ];
-function getSplit(){try{var s=JSON.parse(localStorage.getItem('ft_split')||'null');if(s&&s.length)return s;}catch(e){}localStorage.setItem('ft_split',JSON.stringify(DEFAULT_SPLIT));return JSON.parse(JSON.stringify(DEFAULT_SPLIT));}
-function saveSplitData(s){localStorage.setItem('ft_split',JSON.stringify(s));}
+function newSplitId(){return 'sp'+Date.now()+Math.floor(Math.random()*1000)}
+function getSplits(){
+  var raw=null;
+  try{raw=JSON.parse(localStorage.getItem('ft_splits')||'null')}catch(e){}
+  if(raw&&raw.length)return raw;
+  // Migrate legacy single-split storage if present, else seed a default.
+  var legacy=null;
+  try{legacy=JSON.parse(localStorage.getItem('ft_split')||'null')}catch(e){}
+  var seeded=[{id:newSplitId(),name:'My Split',days:(legacy&&legacy.length)?legacy:JSON.parse(JSON.stringify(DEFAULT_SPLIT_DAYS))}];
+  localStorage.setItem('ft_splits',JSON.stringify(seeded));
+  localStorage.setItem('ft_active_split',seeded[0].id);
+  return seeded;
+}
+function saveSplitsData(arr){localStorage.setItem('ft_splits',JSON.stringify(arr));}
+function getActiveSplitId(){
+  var splits=getSplits();
+  var id=localStorage.getItem('ft_active_split');
+  if(id&&splits.some(function(s){return s.id===id}))return id;
+  localStorage.setItem('ft_active_split',splits[0].id);
+  return splits[0].id;
+}
+function setActiveSplitId(id){localStorage.setItem('ft_active_split',id);}
+function getActiveSplit(){
+  var splits=getSplits(),id=getActiveSplitId();
+  return splits.find(function(s){return s.id===id})||splits[0];
+}
 function lastHitDays(key){
   var w=gw();
   for(var i=0;i<w.length;i++){
@@ -1816,6 +1865,13 @@ function lastHitDays(key){
   return null;
 }
 function daysAgoLabel(n){if(n===null)return 'Not logged yet';if(n<=0)return 'Today';if(n===1)return 'Yesterday';return n+' days ago';}
+function refreshSplitSummary(){
+  try{
+    var sp=getActiveSplit();
+    var nameEl=document.getElementById('split-active-name');if(nameEl)nameEl.textContent=sp.name||'My Split';
+    var ss=document.getElementById('split-summary');if(ss)ss.textContent=sp.days.length?sp.days.map(function(d){return d.key}).join(' · '):'No days yet — tap Manage to add some';
+  }catch(e){}
+}
 function openSplitPicker(){renderSplitPicker();openModal('split-modal');}
 function toggleGymSplit(){
   var item=document.getElementById('gym-row').parentElement;
@@ -1823,20 +1879,21 @@ function toggleGymSplit(){
   if(open)renderGymSplitInline();
 }
 function renderGymSplitInline(){
-  var split=getSplit();
-  document.getElementById('gym-splits').innerHTML=split.map(function(d){
+  var days=getActiveSplit().days;
+  document.getElementById('gym-splits').innerHTML=days.map(function(d){
     var n=lastHitDays(d.key),names=d.ex.map(function(e){return e.name}).slice(0,3).join(', ');
     return '<div class="split-row" onclick="event.stopPropagation();startSplitDay(\''+esc(d.key)+'\')">'
       +'<div style="min-width:0"><div class="split-name">'+esc(d.key)+'</div>'
       +'<div class="split-sub">'+d.ex.length+' exercise'+(d.ex.length===1?'':'s')+(names?' · '+esc(names)+(d.ex.length>3?'…':''):'')+'</div></div>'
       +'<span class="split-last">'+daysAgoLabel(n)+'</span></div>';
   }).join('')
+    +(days.length?'':'<div style="font-size:12px;color:var(--muted);padding:8px 2px">No days set up yet.</div>')
     +'<div class="split-row" style="justify-content:center" onclick="event.stopPropagation();startGym(\'\')"><span class="split-name" style="color:var(--muted);font-weight:600">Skip — just log as Gym</span></div>'
-    +'<div class="split-editlink" onclick="event.stopPropagation();openSplitEditor()">Edit my split</div>';
+    +'<div class="split-editlink" onclick="event.stopPropagation();openSplitsManager()">Manage my splits</div>';
 }
 function renderSplitPicker(){
-  var split=getSplit();
-  document.getElementById('split-picker').innerHTML=split.map(function(d){
+  var days=getActiveSplit().days;
+  document.getElementById('split-picker').innerHTML=days.map(function(d){
     var n=lastHitDays(d.key),names=d.ex.map(function(e){return e.name}).slice(0,3).join(', ');
     return '<div class="splitblk" onclick="startSplitDay(\''+esc(d.key)+'\')">'
       +'<span class="dtico" data-ic="dumbbell"></span>'
@@ -1849,7 +1906,7 @@ function renderSplitPicker(){
 function startSplitDay(key){
   closeModal('split-modal');
   var item=document.getElementById('gym-row');if(item&&item.parentElement)item.parentElement.classList.remove('open');
-  var day=getSplit().find(function(d){return d.key===key});
+  var day=getActiveSplit().days.find(function(d){return d.key===key});
   startWorkout('Gym',key);
   if(day&&day.ex.length){
     day.ex.forEach(function(e){AW.exercises.push({name:e.name,type:'normal',equip:e.equip||'',sets:defaultSetsFor(e.name,e.equip||'')});});
@@ -1858,26 +1915,71 @@ function startSplitDay(key){
   toast('✓ '+key+' loaded — weights from last time');
 }
 
-// Split editor
+// Splits manager (list, add, delete, set active)
+function openSplitsManager(){closeModal('split-modal');renderSplitsManager();openModal('splits-mgr-modal');}
+function renderSplitsManager(){
+  var splits=getSplits(),activeId=getActiveSplitId();
+  document.getElementById('splits-list').innerHTML=splits.map(function(s){
+    var on=s.id===activeId;
+    return '<div class="splits-row'+(on?' active':'')+'">'
+      +'<div class="splits-row-main" onclick="editSplit(\''+s.id+'\')">'
+      +'<div class="splits-row-name">'+esc(s.name||'Untitled split')+(on?'<span class="splits-active-badge">ACTIVE</span>':'')+'</div>'
+      +'<div class="splits-row-meta">'+s.days.length+' day'+(s.days.length===1?'':'s')+(s.days.length?' · '+s.days.map(function(d){return esc(d.key)}).join(', '):'')+'</div>'
+      +'</div>'
+      +(on?'':'<button class="btn btn-s btn-sm" style="flex-shrink:0" onclick="event.stopPropagation();makeActiveSplit(\''+s.id+'\')">Use</button>')
+      +(splits.length>1?'<button class="splits-row-del" onclick="event.stopPropagation();deleteSplit(\''+s.id+'\')" aria-label="Delete split">×</button>':'')
+      +'</div>';
+  }).join('');
+}
+function makeActiveSplit(id){setActiveSplitId(id);renderSplitsManager();refreshSplitSummary();toast('✓ Active split updated');}
+function deleteSplit(id){
+  var splits=getSplits();
+  if(splits.length<=1){toast('Keep at least one split');return}
+  splits=splits.filter(function(s){return s.id!==id});
+  saveSplitsData(splits);
+  if(getActiveSplitId()===id)setActiveSplitId(splits[0].id);
+  renderSplitsManager();refreshSplitSummary();toast('Split deleted');
+}
+function newSplit(){
+  var splits=getSplits();
+  var s={id:newSplitId(),name:'New Split',days:[]};
+  splits.push(s);saveSplitsData(splits);
+  editSplit(s.id);
+}
+
+// Day editor (name + freeform days + exercises per day)
 var SPLIT_EDIT=null,EXPICK_TARGET=null,EXPICK_TAB='chest';
-function openSplitEditor(){closeModal('split-modal');SPLIT_EDIT=JSON.parse(JSON.stringify(getSplit()));renderSplitEditor();openModal('split-edit-modal');}
+function editSplit(id){
+  var s=getSplits().find(function(x){return x.id===id});
+  if(!s)return;
+  SPLIT_EDIT=JSON.parse(JSON.stringify(s));
+  closeModal('splits-mgr-modal');
+  document.getElementById('sed-split-name').value=SPLIT_EDIT.name||'';
+  renderSplitEditor();
+  openModal('split-edit-modal');
+}
 function renderSplitEditor(){
-  document.getElementById('split-editor').innerHTML=SPLIT_EDIT.map(function(d,di){
+  document.getElementById('split-editor').innerHTML=SPLIT_EDIT.days.map(function(d,di){
     var ex=d.ex.map(function(e,ei){
       return '<div class="sed-ex"><span class="sed-ex-nm">'+esc(e.name)+'</span>'
         +'<button class="sed-mini" onclick="moveSplitEx('+di+','+ei+',-1)" aria-label="Move up">↑</button>'
         +'<button class="sed-mini" onclick="moveSplitEx('+di+','+ei+',1)" aria-label="Move down">↓</button>'
         +'<button class="sed-mini" onclick="removeSplitEx('+di+','+ei+')" aria-label="Remove">×</button></div>';
     }).join('');
-    return '<div class="sed-day"><div class="sed-hd"><span class="dtico" data-ic="dumbbell"></span><span class="sb-name">'+esc(d.key)+'</span>'
+    return '<div class="sed-day"><div class="sed-hd"><span class="dtico" data-ic="dumbbell"></span>'
+      +'<input type="text" class="sed-day-name" value="'+esc(d.key)+'" placeholder="Day name" onchange="renameSplitDay('+di+',this.value)">'
+      +'<button class="sed-day-del" onclick="removeSplitDay('+di+')" aria-label="Delete day">×</button>'
       +'<button class="btn btn-p btn-sm" onclick="openExPicker('+di+')">+ Add</button></div>'
       +(ex||'<div style="font-size:12px;color:var(--muted);padding:6px 0">No exercises yet — tap + Add.</div>')+'</div>';
   }).join('');
   renderIcons(document.getElementById('split-editor'));
 }
-function moveSplitEx(di,ei,dir){var a=SPLIT_EDIT[di].ex,ni=ei+dir;if(ni<0||ni>=a.length)return;var t=a[ei];a[ei]=a[ni];a[ni]=t;renderSplitEditor();}
-function removeSplitEx(di,ei){SPLIT_EDIT[di].ex.splice(ei,1);renderSplitEditor();}
-function openExPicker(di){EXPICK_TARGET=di;document.getElementById('expick-title').textContent='Add to '+SPLIT_EDIT[di].key;renderExPick();openModal('expick-modal');}
+function renameSplitDay(di,val){SPLIT_EDIT.days[di].key=(val||'').trim()||'Day '+(di+1);}
+function addSplitDay(){SPLIT_EDIT.days.push({key:'New Day',ex:[]});renderSplitEditor();}
+function removeSplitDay(di){SPLIT_EDIT.days.splice(di,1);renderSplitEditor();}
+function moveSplitEx(di,ei,dir){var a=SPLIT_EDIT.days[di].ex,ni=ei+dir;if(ni<0||ni>=a.length)return;var t=a[ei];a[ei]=a[ni];a[ni]=t;renderSplitEditor();}
+function removeSplitEx(di,ei){SPLIT_EDIT.days[di].ex.splice(ei,1);renderSplitEditor();}
+function openExPicker(di){EXPICK_TARGET=di;document.getElementById('expick-title').textContent='Add to '+SPLIT_EDIT.days[di].key;renderExPick();openModal('expick-modal');}
 function renderExPick(){
   var parts=[['chest','Chest'],['back','Back'],['shoulders','Shoulders'],['arms','Arms'],['legs','Legs'],['core','Core'],['cardio','Cardio']];
   document.getElementById('expick-tabs').innerHTML=parts.map(function(p){return '<div class="pt'+(p[0]===EXPICK_TAB?' on':'')+'" onclick="setExPickTab(\''+p[0]+'\')">'+p[1]+'</div>';}).join('');
@@ -1886,8 +1988,18 @@ function renderExPick(){
   }).join('');
 }
 function setExPickTab(t){EXPICK_TAB=t;renderExPick();}
-function addSplitEx(name){if(EXPICK_TARGET===null)return;SPLIT_EDIT[EXPICK_TARGET].ex.push({name:name,equip:''});toast('✓ '+name+' added');renderSplitEditor();}
-function saveSplitEdits(){saveSplitData(SPLIT_EDIT);closeModal('expick-modal');closeModal('split-edit-modal');toast('✓ Split saved');}
+function addSplitEx(name){if(EXPICK_TARGET===null)return;SPLIT_EDIT.days[EXPICK_TARGET].ex.push({name:name,equip:''});toast('✓ '+name+' added');renderSplitEditor();}
+function saveSplitEdits(){
+  if(!SPLIT_EDIT)return;
+  SPLIT_EDIT.name=(document.getElementById('sed-split-name').value||'').trim()||'Untitled split';
+  var splits=getSplits();
+  var idx=splits.findIndex(function(s){return s.id===SPLIT_EDIT.id});
+  if(idx>=0)splits[idx]=SPLIT_EDIT;else splits.push(SPLIT_EDIT);
+  saveSplitsData(splits);
+  closeModal('expick-modal');closeModal('split-edit-modal');
+  refreshSplitSummary();
+  toast('✓ Split saved');
+}
 function wkTitle(wk){
   if(wk.split)return wk.split;
   var ex=(wk.exercises||[]).map(function(e){return e.name});
@@ -3521,7 +3633,7 @@ function init(){
   restoreAW();
   updateAutoBackupUI();maybeAutoBackup();
   renderIcons();
-  try{var ss=document.getElementById('split-summary');if(ss)ss.textContent=getSplit().map(function(d){return d.key}).join(' · ');}catch(e){}
+  try{refreshSplitSummary();}catch(e){}
 }
 init();
 </script>
